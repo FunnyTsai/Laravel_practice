@@ -31,7 +31,8 @@
     <link rel="stylesheet" href="{{ asset('bootstrap-table/bootstrap-table.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-table/bootstrap-table-filter-control.css') }}">
-    
+    <script src="{{ asset('js/member_delete.js') }}" crossorigin="anonymous"></script>
+
     <style>
         #table th {
             text-align: center;
@@ -43,6 +44,12 @@
     </style>
 </head>
 <body>
+    @if(session('notice'))
+        <div class="alert alert-success">
+            {{ session('notice') }}
+        </div>
+    @endif
+
     @extends('layouts.member')
 
     @section('sidebar')
@@ -78,8 +85,10 @@
             <tbody>
                 @foreach ($userData as $user)
                     <tr>
-                        <td></td>
-                        {{-- edit需要傳送member參數 --}}
+                        <td>
+                            <input type="checkbox" name="btSelectItem" value="{{ $user->USER_ID }}">
+                        </td>
+                        {{-- edit需要傳送member參數  --}}
                         {{-- <td><a href="{{ route('member.edit', ['member' => $user->USER_ID]) }}">{{ $user->USER_ID }}</a></td> --}}
                         <td><a href="{{ route('member.edit', $user) }}">{{ $user->USER_ID }}</a></td>
                         <td>{{ $user->USER_NAME }}</td>
@@ -135,11 +144,18 @@
 
         <div class="text-end">
             <a class="btn btn-primary" href="{{ route('member.create') }}">新增帳號</a>
-            <a class="btn btn-danger" href="">刪除選取項目</a>
+            <form action="{{ route('member.destroy', $user)}}" method="post">
+            {{-- <form id="deleteForm" action="{{ route('member.bulkDestroy') }}" method="post"> --}}
+                @csrf
+                @method('delete')
+                <input type="hidden" name="ids" id="deleteIds">
+                <button type="submit" class="btn btn-danger">刪除選取項目</button>
+            </form>
         </div>
 
         <script>
-            // 在此初始化 bootstrap-table
+            const bulkDestroyUrl = '{{ route("member.bulkDestroy") }}';
+
             $(function () {
                 $('#table').bootstrapTable({
                 });

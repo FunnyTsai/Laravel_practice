@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MembersController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,14 +25,16 @@ use Illuminate\Support\Facades\Route;
 // });
 
 // Route::resource會自動產生基本CRUD的route
-// 在MemberController中就可以使用store()、edit()等方法..
-Route::resource('member', MemberController::class);
-Route::get('/userData', [MemberController::class, 'getUserData'])->name('userData.json');
+// 在MembersController中就可以使用store()、edit()等方法..
+Route::resource('member', MembersController::class);
+// Route::delete('/member/bulk-destroy', [MembersController::class, 'bulkDestroy'])->name('member.bulkDestroy');
+
+Route::get('/userData', [MembersController::class, 'getUserData'])->name('userData.json');
 
 
 // 單獨使用get定義的index方法
 // 指定名字為root後，當未來root指向的位子更改時就會一起更動，方便維護
-Route::get('/', [MemberController::class, 'index'])->name('root');
+Route::get('/', [MembersController::class, 'index'])->name('root');
 
 
 Route::get('/dashboard', function () {
@@ -40,20 +42,22 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 
-Route::get('/sidebar', function () {
-    return view('layouts.sidebar');
-});
+// Route::get('/sidebar', function () {
+//     return view('layouts.sidebar');
+// });
 
 
-Route::get('/test', function () {
-    return view('layouts.member');
-});
+// Route::get('/test', function () {
+//     return view('layouts.member');
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
 
 
 require __DIR__.'/auth.php';

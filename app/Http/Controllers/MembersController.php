@@ -5,7 +5,7 @@ use App\Models\Member;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
-class MemberController extends Controller
+class MembersController extends Controller
 {
     // public function index(){
     //     $userData = Member::all()->toJson();
@@ -16,7 +16,8 @@ class MemberController extends Controller
     
     public function index()
     {
-        $userData = Member::where('ORG_ID', '84')->get();
+        // $userData = Member::where('ORG_ID', '84')->get();
+        $userData = Member::where('USER_NAME', 'TEST')->get();
         return view('member.index', ['userData' => $userData]);
     }
 
@@ -72,4 +73,26 @@ class MemberController extends Controller
                     ['member' => $member, 'group' => $group, 'zone' => $zone, 'role' => $role, 'org' => $org]);
     }
 
+    public function destroy($USER_ID){
+        // auth()->user()->members->find($USER_ID);
+        $member = member::find($USER_ID);
+
+        if (!$member) {
+            return redirect()->route('root')->with('error', '找不到會員資料！');
+        }
+        else{
+            $member->delete();
+            return redirect()->route('root')->with('notice','會員資料已成功刪除！');
+        }
+    }
+    
+    // public function bulkDestroy(Request $request) {
+    //     $ids = explode(',', $request->input('ids'));
+    
+    //     // 刪除所選中的項目 
+    //     Member::whereIn('id', $ids)->delete();
+    
+    //     return redirect()->route('root')->with('notice', '選取項目已成功刪除！');
+    // }
+    
 }
