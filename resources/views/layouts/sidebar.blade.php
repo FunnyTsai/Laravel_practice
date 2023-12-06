@@ -11,13 +11,14 @@
 <body>
 
   <!-- 左側工作區 -->
-  <div class="flex-shrink-0 p-3" style="width: 12%;">
+  <div class="flex-shrink-0 p-3" style="width: 17%;">
       <a href="/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
-        <img src="{{ asset('images/ARICH.png') }}" alt="Example Image" style="width: 85%; height: auto;">
+        <img src="{{ asset('images/ARICH.png') }}" alt="Example Image" style="width: 90%; height: auto;">
       </a>
-      <ul class="list-unstyled ps-0" style="overflow-y: auto; max-height: 85vh;">
+      {{-- max-height: 440px; --}}
+      <ul class="list-unstyled ps-0" style="overflow-y: auto; max-height: 82%;">
         <li class="mb-1">
-          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" aria-expanded="true">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" aria-expanded="false">
             首頁
           </button>
         </li>
@@ -214,7 +215,7 @@
         </li>
         <li class="mb-1">
           <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#b_convert-collapse" aria-expanded="false">
-            B _ 轉檔作業
+            B_轉檔作業
           </button>
           <div class="collapse" id="b_convert-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -224,7 +225,7 @@
         </li>
         <li class="mb-1">
           <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#b_delivery-collapse" aria-expanded="false">
-            B _ 配送管理
+            B_配送管理
           </button>
           <div class="collapse" id="b_delivery-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -234,7 +235,7 @@
         </li>
         <li class="mb-1">
           <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#b_delivery_print-collapse" aria-expanded="false">
-            B _ 配送報表列印
+            B_配送報表列印
           </button>
           <div class="collapse" id="b_delivery_print-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -244,7 +245,7 @@
         </li>
         <li class="mb-1">
           <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#b_info-collapse" aria-expanded="false">
-            B _ 基本資料維護
+            B_基本資料維護
           </button>
           <div class="collapse" id="b_info-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
@@ -272,9 +273,15 @@
             </ul>
           </div>
         </li>
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" aria-expanded="false">
+            登出
+          </button>
+        </li>
         <li class="border-top my-3"></li>
         <li class="mb-1">
-          <p>登入者：</p>
+          {{-- <p>登入者：@if(isset($login_user)) {{ $login_user }} @endif</p> --}}
+          <p>登入者：{{ auth()->user()->name ?? '未登入' }}</p>
         </li>
       </ul>
     </div>

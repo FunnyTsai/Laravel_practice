@@ -31,98 +31,107 @@
     <link rel="stylesheet" href="{{ asset('bootstrap-table/bootstrap-table.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-table/bootstrap-table-filter-control.css') }}">
-       
+    
+    <style>
+        #table th {
+            text-align: center;
+        }
+    
+        #table td {
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
     @extends('layouts.member')
 
     @section('sidebar')
-        @include('layouts.sidebar')
+        @include('layouts.sidebar', ['login_user' => 'TEST'])
     @endsection
 
     @section('main')
-        <h1 class="fw-bold">系統資料/帳號資料</h1>
+        <h1 class="fw-bold">帳號資料</h1>
 
         {{-- <div class="text-start">
             <a class="btn btn-primary" href="{{ route('member.create') }}">新增帳號</a>
             <a class="btn btn-danger" href="">刪除選取項目</a>
         </div> --}}
 
-        <div class="table-responsive mt-3">
-            <table
-                id="table"
-                data-filter-control="true"
-                data-search="true"
-                data-pagination="true"
-                data-page-size="14"
-                data-show-search-clear-button="true">
-                <thead>
+        <table
+            id="table"
+            data-filter-control="true"
+            data-search="true"
+            data-pagination="true"
+            data-page-size="14"
+            data-show-search-clear-button="true">
+            <thead>
+                <tr>
+                    <th data-field="0" data-checkbox="true"></th>  
+                    <th data-field="USER_ID" data-filter-control="input">員工編號</th>
+                    <th data-field="USER_NAME" data-filter-control="input">姓名</th>
+                    <th data-field="USER_GROUP" data-filter-control="select">部門</th>
+                    <th data-field="USER_ZONE" data-filter-control="select">區域</th>
+                    <th data-field="TEAM" data-filter-control="input">組別</th>
+                    <th data-field="USER_ROLE" data-filter-control="select">角色</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($userData as $user)
                     <tr>
-                        <th data-field="0" data-checkbox="true"></th>  
-                        <th data-field="USER_ID" data-filter-control="input">員工編號</th>
-                        <th data-field="USER_NAME" data-filter-control="input">姓名</th>
-                        <th data-field="USER_GROUP" data-filter-control="select">部門</th>
-                        <th data-field="USER_ZONE" data-filter-control="select">區域</th>
-                        <th data-field="TEAM" data-filter-control="input">組別</th>
-                        <th data-field="USER_ROLE" data-filter-control="select">角色</th>
+                        <td></td>
+                        {{-- edit需要傳送member參數 --}}
+                        {{-- <td><a href="{{ route('member.edit', ['member' => $user->USER_ID]) }}">{{ $user->USER_ID }}</a></td> --}}
+                        <td><a href="{{ route('member.edit', $user) }}">{{ $user->USER_ID }}</a></td>
+                        <td>{{ $user->USER_NAME }}</td>
+                        <td>{{ $user->USER_GROUP }}</td>
+                        <td>{{ $user->USER_ZONE }}</td>
+                        <td>{{ $user->TEAM }}</td>
+                        <td>
+                            @switch($user->USER_ROLE)
+                            @case('S')
+                                系統管理員
+                                @break
+                            @case('A')
+                                助理
+                                @break
+                            @case('B')
+                                部門經理
+                                @break
+                            @case('C')
+                                客服人員
+                                @break
+                            @case('D')
+                                後勤人員
+                                @break
+                            @case('E')
+                                主管
+                                @break
+                            @case('F')
+                                原廠人員
+                                @break
+                            @case('G')
+                                ARM
+                                @break
+                            @case('H')
+                                出納主管
+                                @break
+                            @case('I')
+                                信管人員
+                                @break
+                            @case('J')
+                                財務長
+                                @break
+                            @case('L')
+                                離職
+                                @break
+                            @default
+                                一般使用者
+                            @endswitch
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach ($userData as $user)
-                        <tr>
-                            <td></td>
-                            <td>{{ $user->USER_ID }}</td>
-                            <td>{{ $user->USER_NAME }}</td>
-                            <td>{{ $user->USER_GROUP }}</td>
-                            <td>{{ $user->USER_ZONE }}</td>
-                            <td>{{ $user->TEAM }}</td>
-                            <td>
-                                @switch($user->USER_ROLE)
-                                @case('S')
-                                    系統管理員
-                                    @break
-                                @case('A')
-                                    助理
-                                    @break
-                                @case('B')
-                                    部門經理
-                                    @break
-                                @case('C')
-                                    客服人員
-                                    @break
-                                @case('D')
-                                    後勤人員
-                                    @break
-                                @case('E')
-                                    主管
-                                    @break
-                                @case('F')
-                                    原廠人員
-                                    @break
-                                @case('G')
-                                    ARM
-                                    @break
-                                @case('H')
-                                    出納主管
-                                    @break
-                                @case('I')
-                                    信管人員
-                                    @break
-                                @case('J')
-                                    財務長
-                                    @break
-                                @case('L')
-                                    離職
-                                    @break
-                                @default
-                                    一般使用者
-                                @endswitch
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
+                @endforeach
+            </tbody>
+        </table>
 
         <div class="text-end">
             <a class="btn btn-primary" href="{{ route('member.create') }}">新增帳號</a>

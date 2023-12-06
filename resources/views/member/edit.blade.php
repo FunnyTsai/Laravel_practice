@@ -30,7 +30,7 @@
     @endsection
 
     @section('main')
-        <h1 class="fw-bold">帳號資料【新增】</h1>
+        <h1 class="fw-bold">帳號資料【編輯】</h1>
 
         <div class="d-flex justify-content-center">
             <div class="container-fluid">
@@ -43,7 +43,7 @@
                             <div class="row g-3">
                                 <div class="col-sm-6">
                                     <label for="user_id" class="form-label">帳號</label>
-                                    <input type="text" class="form-control" id="user_id" placeholder="" value="" required>
+                                    <input type="text" class="form-control" id="user_id" placeholder="" value="{{ $member -> USER_ID }}" required>
                                     <div class="invalid-feedback">
                                         帳號欄位為必填.
                                     </div>
@@ -51,7 +51,7 @@
 
                                 <div class="col-sm-6">
                                     <label for="user_name" class="form-label">姓名</label>
-                                    <input type="text" class="form-control" id="user_name" placeholder="" value="" required>
+                                    <input type="text" class="form-control" id="user_name" placeholder="" value="{{ $member -> USER_NAME }}" required>
                                     <div class="invalid-feedback">
                                         姓名欄位為必填.
                                     </div>
@@ -61,7 +61,13 @@
                                     <label for="user_group" class="form-label">部門</label>
                                     <select class="form-select" id="user_group" required>
                                         <option value="">請選擇部門...</option>
-                                        <option>United States</option>
+                                        @foreach($group as $item)
+                                            <option value='{{ $item -> VLS_CODE }}'
+                                                @if($item->VLS_CODE == $member->USER_GROUP) selected 
+                                                @endif>
+                                                {{ $item -> VLS_CODE }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     <div class="invalid-feedback">
                                         部門欄位為必填.
@@ -72,9 +78,13 @@
                                     <label for="user_zone" class="form-label">區域</label>
                                     <select class="form-select" id="user_zone" required>
                                         <option value="">請選擇區域...</option>
-                                        <option value="中區">中區</option>
-                                        <option value="北區">北區</option>
-                                        <option value="南區">南區</option>
+                                        @foreach($zone as $item)
+                                            <option value='{{ $item -> VLS_CODE }}'
+                                                @if($item->VLS_CODE == $member->USER_ZONE) selected 
+                                                @endif>
+                                                {{ $item -> VLS_CODE }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     <div class="invalid-feedback">
                                         區域欄位為必填.
@@ -84,7 +94,7 @@
                                 <div class="col-sm-6">
                                     <label for="user_boss" class="form-label">主管</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="user_boss" placeholder="" value="">
+                                        <input type="text" class="form-control" id="user_boss" placeholder="" value="{{ $member -> USER_BOSS }}">
                                         <div class="input-group-append">
                                             <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
                                         </div>
@@ -92,12 +102,16 @@
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="country" class="form-label">角色</label>
-                                    <select class="form-select" id="country" required>
+                                    <label for="user_role" class="form-label">角色</label>
+                                    <select class="form-select" id="user_role" required>
                                         <option value="">請選擇角色...</option>
-                                        <option value="中區">中區</option>
-                                        <option value="北區">北區</option>
-                                        <option value="南區">南區</option>
+                                        @foreach($role as $item)
+                                            <option value='{{ $item -> PHR_NAME }}' 
+                                                @if($item->PHR_TYPE == $member->USER_ROLE) selected 
+                                                @endif>
+                                                {{ $item -> PHR_NAME }}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     <div class="invalid-feedback">
                                         角色欄位為必填.
@@ -105,16 +119,16 @@
                                 </div>
 
                                 <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">組別</label>
+                                    <label for="team" class="form-label">組別</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="boss" placeholder="" value="">
+                                        <input type="text" class="form-control" id="team" placeholder="" value="{{ $member -> TEAM }}">
                                         <div class="input-group-append">
                                             <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="col-sm-6">
+                                {{-- <div class="col-sm-6">
                                     <label for="firstName" class="form-label">行動電話</label>
                                     <input type="text" class="form-control" id="firstName" placeholder="" value="">
                                 </div>
@@ -127,12 +141,7 @@
                                 <div class="col-sm-6">
                                     <label for="firstName" class="form-label">傳真</label>
                                     <input type="text" class="form-control" id="firstName" placeholder="" value="">
-                                </div>
-
-                                <div class="col-6">
-                                    <label for="email" class="form-label">電子信箱</label>
-                                    <input type="email" class="form-control" id="email" placeholder="yourname@arich.com.tw">
-                                </div>
+                                </div> --}}
 
                                 <div class="col-sm-6">
                                     <label for="firstName" class="form-label">差勤員工編號</label>
@@ -142,6 +151,11 @@
                                             <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
                                         </div>
                                     </div>
+                                </div>
+
+                                <div class="col-12">
+                                    <label for="email" class="form-label">電子信箱</label>
+                                    <input type="email" class="form-control" id="email" placeholder="yourname@arich.com.tw" value="{{ $member -> USER_MAIL }}">
                                 </div>
 
                                 <div class="col-sm-6">
@@ -158,8 +172,8 @@
                                     <label for="country" class="form-label">標案訊息</label>
                                     <select class="form-select" id="country" required>
                                         <option value="">請選擇標案訊息...</option>
-                                        <option value="是">是</option>
-                                        <option value="否">否</option>
+                                        <option value="Y">是</option>
+                                        <option value="N">否</option>
                                     </select>
                                     <div class="invalid-feedback">
                                         標案訊息欄位為必填.
@@ -167,21 +181,29 @@
                                 </div>
 
                                 <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">業務員ID</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="" value="">
+                                    <label for="salesrep_id" class="form-label">業務員ID</label>
+                                    <input type="text" class="form-control" id="salesrep_id" placeholder="" value="{{ $member -> SALESREP_ID }}">
                                 </div>
 
                                 <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">收款員ID</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="" value="">
+                                    <label for="collector_id" class="form-label">收款員ID</label>
+                                    <input type="text" class="form-control" id="collector_id" placeholder="" value="{{ $member -> COLLECTOR_ID }}">
                                 </div>
                             
                                 <div class="col-md-6">
-                                    <label for="country" class="form-label">訂單金額</label>
-                                    <select class="form-select" id="country">
+                                    <label for="ord_amt" class="form-label">訂單金額</label>
+                                    <select class="form-select" id="ord_amt">
                                         <option value="">請選擇訂單金額...</option>
-                                        <option value="是">是</option>
-                                        <option value="否">否</option>
+                                        <option value="Y" 
+                                            @if($member->ORD_AMT == 'Y') selected 
+                                            @endif>
+                                            是
+                                        </option>
+                                        <option value="N" 
+                                            @if($member->ORD_AMT == 'N') selected 
+                                            @endif>
+                                            否
+                                        </option>
                                     </select>
                                     <div class="invalid-feedback">
                                         訂單金額欄位為必填.
@@ -189,31 +211,55 @@
                                 </div>
                             
                                 <div class="col-md-6">
-                                    <label for="country" class="form-label">訂單折讓金額</label>
-                                    <select class="form-select" id="country">
+                                    <label for="ord_dis_amt" class="form-label">訂單折讓金額</label>
+                                    <select class="form-select" id="ord_dis_amt">
                                         <option value="">請選擇訂單折讓金額...</option>
-                                        <option value="是">是</option>
-                                        <option value="否">否</option>
+                                        <option value="Y" 
+                                            @if($member->ORD_DIS_AMT == 'Y') selected 
+                                            @endif>
+                                            是
+                                        </option>
+                                        <option value="N" 
+                                            @if($member->ORD_DIS_AMT == 'N') selected 
+                                            @endif>
+                                            否
+                                        </option>
                                     </select>
                                 </div>
                             
                                 <div class="col-md-6">
-                                    <label for="country" class="form-label">行事曆預設</label>
-                                    <select class="form-select" id="country">
+                                    <label for="user_schedule" class="form-label">行事曆預設</label>
+                                    <select class="form-select" id="user_schedule">
                                         <option value="">請選擇行事曆預設...</option>
-                                        <option value="日">日</option>
-                                        <option value="週">週</option>
-                                        <option value="月">月</option>
+                                        <option value="1" 
+                                            @if($member->USER_SCHEDULE == '1') selected 
+                                            @endif>
+                                            日
+                                        </option>
+                                        <option value="2"
+                                            @if($member->USER_SCHEDULE == '2') selected 
+                                            @endif>
+                                            週
+                                        </option>
+                                        <option value="3"
+                                            @if($member->USER_SCHEDULE == '3') selected 
+                                            @endif>
+                                            月
+                                        </option>
                                     </select>
                                 </div>
 
                                 <div class="col-md-6">
-                                    <label for="country" class="form-label">ORG預設</label>
-                                    <select class="form-select" id="country" required>
+                                    <label for="org_id" class="form-label">ORG預設</label>
+                                    <select class="form-select" id="org_id" required>
                                         <option value="">請選擇ORG預設...</option>
-                                        <option value="久裕企業">久裕企業</option>
-                                        <option value="代收帳本">代收帳本</option>
-                                        <option value="裕康國際OU">裕康國際OU</option>
+                                        @foreach($org as $item)
+                                            <option value='{{ $item -> ORG_ID }}'
+                                                @if($item->ORG_ID == $member->ORG_ID) selected 
+                                                @endif>
+                                                {{ $item -> OU_NAME}}
+                                            </option>
+                                        @endforeach
                                     </select>
                                     <div class="invalid-feedback">
                                         ORG預設欄位為必填.
@@ -221,18 +267,18 @@
                                 </div>
 
                                 <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">誤餐費費用職別</label>
+                                    <label for="meal_fee" class="form-label">誤餐費費用職別</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="boss" placeholder="" value="">
+                                        <input type="text" class="form-control" id="meal_fee" placeholder="" value="">
                                         <div class="input-group-append">
                                             <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">交通津貼職別</label>
+                                    <label for="trf_fee" class="form-label">交通津貼職別</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="boss" placeholder="" value="">
+                                        <input type="text" class="form-control" id="trf_fee" placeholder="" value="">
                                         <div class="input-group-append">
                                             <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
                                         </div>
