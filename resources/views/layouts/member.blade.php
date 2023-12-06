@@ -11,7 +11,7 @@
         @yield('sidebar')
 
         <!-- 右側工作區 -->
-        <div class="flex-grow-1 p-3">
+        <div class="flex-grow-1 p-3" style="overflow-y: auto; max-height: 90%;">
             @yield('main')
         </div>
     </main>
