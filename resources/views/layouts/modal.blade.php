@@ -1,4 +1,4 @@
-{{-- <!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -12,7 +12,18 @@
 
     <!-- 引入 Bootstrap Table JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
-  </head> --}}
+  
+    <!-- 輸入框根據資料庫篩選搜尋(autocomplete相關) -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/smoothness/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <script src="{{ asset('js/autocomplete.js') }}"></script>
+  </head>
+  <style>
+    .required-mark {
+        font-weight: bold;
+        color: red;
+    }
+  </style>
   <body>
       <div class="modal fade" id="bosstModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -23,11 +34,11 @@
             </div>
             <div class="modal-body">
                 <div class="mb-3 row">
-                  <label for="importStatusField" class="col-md-3 form-label">姓名<span class="required-mark">*</span></label>
+                  <label for="nameField" class="col-md-3 form-label">姓名<span class="required-mark">*</span></label>
                   <div class="col-md-9">
-                    <div id="import_status"></div>
+                    <input type="text" class="form-control" id="name" name="name">
                   </div>
-                </div> 
+                </div>  
               <div class="text-center">
                 <button type="button" id="sendButton" class="btn btn-primary">選取</button>
               </div>
@@ -38,6 +49,5 @@
           </div>
         </div>
       </div>
-    </div>
   </body>
-{{-- </html> --}}
+</html>

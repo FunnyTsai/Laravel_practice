@@ -1,9 +1,9 @@
 
-{{-- 檢查傳送過來的資料
-    @isset($userData)
+{{-- 檢查傳送過來的資料 --}}
+{{-- @isset($userData)
     {{ dd($userData) }}
-@endisset 
---}}
+@endisset  --}}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,10 +142,10 @@
             </tbody>
         </table>
 
-        <div class="text-end">
+        <div class="d-flex justify-content-end">
             <a class="btn btn-primary" href="{{ route('member.create') }}">新增帳號</a>
             <form action="{{ route('member.destroy', $user)}}" method="post">
-            {{-- <form id="deleteForm" action="{{ route('member.bulkDestroy') }}" method="post"> --}}
+                {{-- <form id="deleteForm" action="{{ route('member.bulkDestroy') }}" method="post"> --}}
                 @csrf
                 @method('delete')
                 <input type="hidden" name="ids" id="deleteIds">
@@ -153,9 +153,7 @@
             </form>
         </div>
 
-        <script>
-            const bulkDestroyUrl = '{{ route("member.bulkDestroy") }}';
-
+        <script>           
             $(function () {
                 $('#table').bootstrapTable({
                 });

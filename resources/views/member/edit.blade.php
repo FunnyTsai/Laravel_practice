@@ -20,7 +20,6 @@
     <!-- 引入 Bootstrap Table JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
-    <script src="{{ asset('js/member_create.js') }}"></script>
 </head>
 <body>
     @extends('layouts.member')
@@ -43,7 +42,7 @@
                             <div class="row g-3">
                                 <div class="col-sm-6">
                                     <label for="user_id" class="form-label">帳號</label>
-                                    <input type="text" class="form-control" id="user_id" placeholder="" value="{{ $member -> USER_ID }}" required>
+                                    <input type="text" class="form-control" id="user_id" placeholder="" value="{{ $member -> USER_ID }}" maxlength="7" required>
                                     <div class="invalid-feedback">
                                         帳號欄位為必填.
                                     </div>
@@ -144,9 +143,9 @@
                                 </div> --}}
 
                                 <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">差勤員工編號</label>
+                                    <label for="attribute1" class="form-label">差勤員工編號</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="boss" placeholder="" value="">
+                                        <input type="text" class="form-control" id="attribute1" placeholder="" value="">
                                         <div class="input-group-append">
                                             <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
                                         </div>
@@ -169,8 +168,8 @@
                                 </div>
                             
                                 <div class="col-md-6">
-                                    <label for="country" class="form-label">標案訊息</label>
-                                    <select class="form-select" id="country" required>
+                                    <label for="mail" class="form-label">標案訊息</label>
+                                    <select class="form-select" id="mail" required>
                                         <option value="">請選擇標案訊息...</option>
                                         <option value="Y">是</option>
                                         <option value="N">否</option>
@@ -286,9 +285,9 @@
                                 </div>
 
                                 <div class="col-sm-6">
-                                    <label for="password" class="form-label">密碼</label>
+                                    <label for="user_password1" class="form-label">密碼</label>
                                     <div class="input-group">
-                                        <input type="password" class="form-control" id="password" placeholder="密碼" required>
+                                        <input type="password" class="form-control" id="user_password1" placeholder="請輸入密碼" required>
                                         <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                             <i class="bi bi-eye"></i>
                                         </button>
@@ -299,8 +298,8 @@
                                 </div>
 
                                 <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">確認密碼</label>
-                                    <input type="password" class="form-control" id="firstName" placeholder="" value="" required>
+                                    <label for="user_password2" class="form-label">確認密碼</label>
+                                    <input type="password" class="form-control" id="user_password2" placeholder="請再次輸入密碼" required>
                                     <div class="invalid-feedback">
                                         確認密碼欄位為必填.
                                     </div>
