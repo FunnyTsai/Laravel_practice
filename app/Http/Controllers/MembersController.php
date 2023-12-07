@@ -16,32 +16,68 @@ class MembersController extends Controller
     
     public function index()
     {
-        // $userData = Member::where('ORG_ID', '84')->get();
-        $userData = Member::where('USER_NAME', 'TEST')->get();
+        $userData = Member::where('ORG_ID', '84')->get();
+        // $userData = Member::where('USER_NAME', 'TEST')->get();
         return view('member.index', ['userData' => $userData]);
-    }
-
-    public function create(){
-        return view("member.create");
     }
 
     // 會接收前端post過來的參數
     public function store(Request $request){
         // 要與<input>參數name的變數名稱對應
         $content = $request -> validate([
-            'USER_ID' => 'required|min:7',
+            'user_id' => 'required|min:7|max:7',
             'USER_PASSWORD' => 'required'
         ]);
 
-        // 呼叫Member Model寫進資料庫
+        // 呼叫Member Model寫進資料庫 
         Member::create($content);
         // 跳轉到首頁
-        return redirect()->route('root');
+        return redirect()->route('root')->with('notice','會員資料已成功新增！');
     }
 
-    public function edit($USER_ID){
-        // auth()->user()->members->find($USER_ID);
-        $member = member::find($USER_ID);        
+    public function boss(){        
+        $data = DB::table('USERS_TEST')
+                    ->select('USER_NAME')
+                    ->where('USER_ROLE', 'E')
+                    ->get();
+        return $data;
+    }
+    public function team(){        
+        $data = DB::table('USERS_TEST')
+                    ->select('TEAM')
+                    ->distinct()
+                    ->get();
+        return $data;
+    }
+
+    public function create(){
+        $data = $this->getUserData();
+        
+        $boss_auto = $this->boss();
+        $team_auto = $this->team();
+        return view("member.create", ['data' => $data, 'boss_auto' => $boss_auto, 'team_auto' => $team_auto]);;
+    }
+
+    public function list($USER_ID){
+        $data = $this->getUserData($USER_ID);
+        return view("member.create", $data);
+    }
+
+    public function edit($USER_ID){  
+        $data = $this->getUserData($USER_ID);
+        $member = member::find($USER_ID);           
+
+        $mail = DB::table('USERS_TEST')
+                    ->select('mail', $USER_ID)
+                    ->get();
+
+        $data['member'] = $member;
+        $data['mail'] = $mail;
+        return view("member.edit", $data);
+    }
+
+    function getUserData(){
+        // auth()->user()->members->find($USER_ID); 
         $group = DB::table('VALUE_SET_LEBBY')
                     ->select('VLS_CODE')
                     ->where('VLS_KIND', 'GROUP')
@@ -69,8 +105,15 @@ class MembersController extends Controller
                     ->orderBy('ORG_ID')
                     ->get();
 
-        return view("member.edit", 
-                    ['member' => $member, 'group' => $group, 'zone' => $zone, 'role' => $role, 'org' => $org]);
+        $data = [
+            // 'member' => $member, 
+            'group' => $group, 
+            'zone' => $zone, 
+            'role' => $role, 
+            'org' => $org
+        ];
+
+        return $data;
     }
 
     public function destroy($USER_ID){
