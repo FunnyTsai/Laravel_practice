@@ -5,22 +5,16 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
-        {{-- <div>
-            <x-input-label for="email" :value="__('信箱')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
-        </div> --}}
-
-        <!-- USER_ID -->
+        <!-- user_id -->
         <div>
-            <x-input-label for="USER_ID" :value="__('帳號')" />
-            <x-text-input id="USER_ID" class="block mt-1 w-full" type="text" name="USER_ID" :value="old('USER_ID')" required autofocus autocomplete="s" />
-            <x-input-error :messages="$errors->get('USER_ID')" class="mt-2" />
+            <x-input-label for="user_id" :value="__('帳號')" />
+            <x-text-input id="user_id" class="block mt-1 w-full" type="text" name="user_id" :value="old('user_id')" required autofocus autocomplete="user_id" />
+            <x-input-error :messages="$errors->get('user_id')" class="mt-2" />
         </div>
+
         <!-- Password -->
         <div class="mt-4">
-            <x-input-label for="password" :value="__('密碼')" />
+            <x-input-label for="password" :value="__('Password')" />
 
             <x-text-input id="password" class="block mt-1 w-full"
                             type="password"
@@ -34,19 +28,19 @@
         <div class="block mt-4">
             <label for="remember_me" class="inline-flex items-center">
                 <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('記住我') }}</span>
+                <span class="ms-2 text-sm text-gray-600">{{ __('Remember Me') }}</span>
             </label>
         </div>
 
         <div class="flex items-center justify-end mt-4">
             @if (Route::has('password.request'))
                 <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('忘記密碼?') }}
+                    {{ __('Forget password?') }}
                 </a>
             @endif
 
             <x-primary-button class="ms-3">
-                {{ __('登入') }}
+                {{ __('Login') }}
             </x-primary-button>
         </div>
     </form>

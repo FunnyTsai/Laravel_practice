@@ -7,7 +7,6 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
-// 發送新郵件驗證通知
 class EmailVerificationNotificationController extends Controller
 {
     /**

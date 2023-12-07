@@ -8,7 +8,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
-// 顯示信箱欄位的提示訊息
 class EmailVerificationPromptController extends Controller
 {
     /**

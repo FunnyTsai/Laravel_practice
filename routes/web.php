@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 //     return view('welcome');
 // });
 
-// // 測試是否能正確取得資料表資料
+// // 測試是否能正確取得資料表資料 
 // Route::get('/', function () {
 //     var_dump( DB::table('USERS_TEST')->first() );
 // });
@@ -47,17 +47,14 @@ Route::get('/dashboard', function () {
 // });
 
 
-// Route::get('/test', function () {
-//     return view('layouts.member');
-// });
+Route::get('/test', function () {
+    return view('layouts.modal');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-
-
-
 
 require __DIR__.'/auth.php';
