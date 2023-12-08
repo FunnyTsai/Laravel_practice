@@ -1,9 +1,9 @@
 
-{{-- 檢查傳送過來的資料
-    @isset($userData)
-    {{ dd($userData) }}
-@endisset 
---}}
+{{-- 檢查傳送過來的資料 --}}
+{{-- @isset($member)
+    {{ dd($member) }}
+@endisset  --}}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,6 +20,8 @@
     <!-- 引入 Bootstrap Table JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
+    <script src="{{ asset('js/member_create.js') }}"></script>
+    <script src="{{ asset('js/autocomplete.js') }}"></script>
 </head>
 <body>
     @extends('layouts.member')
@@ -42,7 +44,7 @@
                             <div class="row g-3">
                                 <div class="col-sm-6">
                                     <label for="user_id" class="form-label">帳號</label>
-                                    <input type="text" class="form-control" id="user_id" placeholder="" value="{{ $member -> USER_ID }}" maxlength="7" required>
+                                    <input type="text" class="form-control" id="user_id" value="{{ $member['USER_ID'] }}" placeholder="" maxlength="7" required>
                                     <div class="invalid-feedback">
                                         帳號欄位為必填.
                                     </div>
@@ -50,7 +52,7 @@
 
                                 <div class="col-sm-6">
                                     <label for="user_name" class="form-label">姓名</label>
-                                    <input type="text" class="form-control" id="user_name" placeholder="" value="{{ $member -> USER_NAME }}" required>
+                                    <input type="text" class="form-control" id="user_name" value="{{ $member['USER_NAME'] }}" placeholder="" required>
                                     <div class="invalid-feedback">
                                         姓名欄位為必填.
                                     </div>
@@ -60,9 +62,9 @@
                                     <label for="user_group" class="form-label">部門</label>
                                     <select class="form-select" id="user_group" required>
                                         <option value="">請選擇部門...</option>
-                                        @foreach($group as $item)
+                                        @foreach($data['group'] as $item)
                                             <option value='{{ $item -> VLS_CODE }}'
-                                                @if($item->VLS_CODE == $member->USER_GROUP) selected 
+                                                @if($item->VLS_CODE == $member ->USER_GROUP) selected 
                                                 @endif>
                                                 {{ $item -> VLS_CODE }}
                                             </option>
@@ -77,7 +79,7 @@
                                     <label for="user_zone" class="form-label">區域</label>
                                     <select class="form-select" id="user_zone" required>
                                         <option value="">請選擇區域...</option>
-                                        @foreach($zone as $item)
+                                        @foreach($data['zone'] as $item)
                                             <option value='{{ $item -> VLS_CODE }}'
                                                 @if($item->VLS_CODE == $member->USER_ZONE) selected 
                                                 @endif>
@@ -93,10 +95,7 @@
                                 <div class="col-sm-6">
                                     <label for="user_boss" class="form-label">主管</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="user_boss" placeholder="" value="{{ $member -> USER_BOSS }}">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
+                                        <input type="text" class="form-control" id="user_boss" placeholder="請輸入主管姓名" value="{{ $member -> USER_BOSS }}">
                                     </div>
                                 </div>
 
@@ -104,7 +103,7 @@
                                     <label for="user_role" class="form-label">角色</label>
                                     <select class="form-select" id="user_role" required>
                                         <option value="">請選擇角色...</option>
-                                        @foreach($role as $item)
+                                        @foreach($data['role'] as $item)
                                             <option value='{{ $item -> PHR_NAME }}' 
                                                 @if($item->PHR_TYPE == $member->USER_ROLE) selected 
                                                 @endif>
@@ -120,10 +119,7 @@
                                 <div class="col-sm-6">
                                     <label for="team" class="form-label">組別</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="team" placeholder="" value="{{ $member -> TEAM }}">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
+                                        <input type="text" class="form-control" id="team" placeholder="請輸入組別" value="{{ $member -> TEAM }}">
                                     </div>
                                 </div>
 
@@ -160,10 +156,7 @@
                                 <div class="col-sm-6">
                                     <label for="firstName" class="form-label">原廠</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="boss" placeholder="" value="">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
+                                        <input type="text" class="form-control" id="orig_vendor" placeholder="請輸入原廠" value="">
                                     </div>
                                 </div>
                             
@@ -171,8 +164,14 @@
                                     <label for="mail" class="form-label">標案訊息</label>
                                     <select class="form-select" id="mail" required>
                                         <option value="">請選擇標案訊息...</option>
-                                        <option value="Y">是</option>
-                                        <option value="N">否</option>
+                                        <option value="Y"
+                                            @if($member->MAIL == "Y") selected 
+                                            @endif>是
+                                        </option>
+                                        <option value="N"
+                                            @if($member->MAIL == "N") selected 
+                                            @endif>否
+                                        </option>
                                     </select>
                                     <div class="invalid-feedback">
                                         標案訊息欄位為必填.
@@ -181,12 +180,16 @@
 
                                 <div class="col-sm-6">
                                     <label for="salesrep_id" class="form-label">業務員ID</label>
-                                    <input type="text" class="form-control" id="salesrep_id" placeholder="" value="{{ $member -> SALESREP_ID }}">
+                                    <input type="text" class="form-control" id="salesrep_id" placeholder="" value="{{ $member ->SALESREP_ID }}">
                                 </div>
-
-                                <div class="col-sm-6">
-                                    <label for="collector_id" class="form-label">收款員ID</label>
-                                    <input type="text" class="form-control" id="collector_id" placeholder="" value="{{ $member -> COLLECTOR_ID }}">
+                                
+                                <div class="mb-3 col-md-3">
+                                    <label for="teacher_1" class="form-label">收款員ID</label>
+                                    <input type="text" class="form-control" id="collector_id" placeholder="" value="{{ $member->COLLECTOR_ID }}">
+                                </div>
+                                <div class="mb-3 col-md-3">
+                                    <label for="teacher_1" class="form-label" style="color:white">I</label>
+                                    <input type="text" class="form-control" id="collector_name" value="{{ $member->COLLECTOR_ID }} ({{ $data['collector_name']->NAME }})" style="color:red; font-weight:600" disabled>
                                 </div>
                             
                                 <div class="col-md-6">
@@ -252,7 +255,7 @@
                                     <label for="org_id" class="form-label">ORG預設</label>
                                     <select class="form-select" id="org_id" required>
                                         <option value="">請選擇ORG預設...</option>
-                                        @foreach($org as $item)
+                                        @foreach($data['org'] as $item)
                                             <option value='{{ $item -> ORG_ID }}'
                                                 @if($item->ORG_ID == $member->ORG_ID) selected 
                                                 @endif>
@@ -267,21 +270,39 @@
 
                                 <div class="col-sm-6">
                                     <label for="meal_fee" class="form-label">誤餐費費用職別</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="meal_fee" placeholder="" value="">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
-                                    </div>
+                                    <select class="form-select" id="meal_fee">
+                                        <option value="">請選擇誤餐費費用職別...</option>
+                                        <option value="PSR009"
+                                            @if($member->MEAL_FEE == 'PSR009') selected 
+                                            @endif>誤餐津貼_不計日當
+                                        </option>
+                                        <option value="PSR003"
+                                            @if($member->MEAL_FEE == 'PSR003') selected 
+                                            @endif>誤餐津貼_業務代表
+                                        </option>
+                                        <option value="PSR007"
+                                            @if($member->MEAL_FEE == 'PSR007') selected 
+                                            @endif>誤餐津貼_主任
+                                        </option>
+                                        <option value="PSR002"
+                                            @if($member->MEAL_FEE == 'PSR002') selected 
+                                            @endif>誤餐津貼_經理
+                                        </option>
+                                    </select>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="trf_fee" class="form-label">交通津貼職別</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="trf_fee" placeholder="" value="">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
-                                    </div>
+                                    <select class="form-select" id="trf_fee">
+                                        <option value="">請選擇誤餐費費用職別...</option>
+                                        <option value="PSR001"
+                                            @if($member->TRF_FEE == 'PSR001') selected 
+                                            @endif>交通津貼_業務代表
+                                        </option>
+                                        <option value="PSR005"
+                                            @if($member->TRF_FEE == 'PSR005') selected 
+                                            @endif>交通津貼_主任
+                                        </option>
+                                    </select>
                                 </div>
 
                                 <div class="col-sm-6">
@@ -299,7 +320,12 @@
 
                                 <div class="col-sm-6">
                                     <label for="user_password2" class="form-label">確認密碼</label>
-                                    <input type="password" class="form-control" id="user_password2" placeholder="請再次輸入密碼" required>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="user_password2" placeholder="請再次輸入密碼" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
                                     <div class="invalid-feedback">
                                         確認密碼欄位為必填.
                                     </div>
@@ -313,6 +339,12 @@
                                 <button class="btn btn-success" type="submit" href="{{ route('member.create') }}">確定存檔</button>
                                 <a class="btn btn-light" href="{{ route('member.index') }}">回主畫面</a>
                             </div>
+
+                            <div class='hidden'>                                
+                                <input type="hidden" id="bossAuto" data-auto="{{ $boss_auto }}" value="">
+                                <input type="hidden" id="teamAuto" data-auto="{{ $team_auto }}" value="">
+                                <input type="hidden" id="fac_auto" data-auto="{{ $fac_auto }}" value="">
+                            </div>  
                         </form>
                     </div>
                 </div>

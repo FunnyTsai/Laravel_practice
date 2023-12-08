@@ -26,11 +26,12 @@ class MembersController extends Controller
         // 要與<input>參數name的變數名稱對應
         $content = $request -> validate([
             'user_id' => 'required|min:7|max:7',
-            'USER_PASSWORD' => 'required'
+            'user_name' => 'required',
+            'user_password1' => 'required'
         ]);
 
         // 呼叫Member Model寫進資料庫 
-        Member::create($content);
+        members()->create($content);
         // 跳轉到首頁
         return redirect()->route('root')->with('notice','會員資料已成功新增！');
     }
@@ -69,11 +70,11 @@ class MembersController extends Controller
         $team_auto = $this->team();
         $fac_auto = $this->fac();
         return view("member.create", [
-                                        'data' => $data, 
-                                        'boss_auto' => $boss_auto, 
-                                        'team_auto' => $team_auto, 
-                                        'fac_auto' => $fac_auto
-                                    ]);;
+                        'data' => $data, 
+                        'boss_auto' => $boss_auto, 
+                        'team_auto' => $team_auto, 
+                        'fac_auto' => $fac_auto
+                    ]);
     }
 
     public function list($USER_ID){
@@ -83,15 +84,27 @@ class MembersController extends Controller
 
     public function edit($USER_ID){  
         $data = $this->getUserData($USER_ID);
-        $member = member::find($USER_ID);           
+        $member = member::find($USER_ID);     
 
-        $mail = DB::table('USERS_TEST')
-                    ->select('mail', $USER_ID)
-                    ->get();
+        $collector_name = DB::table('A_AR_COLLECTOR_TEST')
+                            ->select('NAME')
+                            ->where('COLLECTOR_ID', $member->COLLECTOR_ID)
+                            ->first();      
 
         $data['member'] = $member;
-        $data['mail'] = $mail;
-        return view("member.edit", $data);
+        $data['collector_name'] = $collector_name;
+        
+        $boss_auto = $this->boss();
+        $team_auto = $this->team();
+        $fac_auto = $this->fac();
+
+        return view("member.edit", [
+                        'data' => $data, 
+                        'member' => $member, 
+                        'boss_auto' => $boss_auto, 
+                        'team_auto' => $team_auto, 
+                        'fac_auto' => $fac_auto
+                    ]);
     }
 
     function getUserData(){

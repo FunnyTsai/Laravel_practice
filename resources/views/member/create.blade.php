@@ -44,7 +44,7 @@
                             <div class="row g-3">
                                 <div class="col-sm-6">
                                     <label for="user_id" class="form-label">帳號</label>
-                                    <input type="text" class="form-control" id="user_id" placeholder="" value="" maxlength="7" required>
+                                    <input type="text" class="form-control" id="user_id" name="account" placeholder="" value="" maxlength="7" required>
                                     <div class="invalid-feedback">
                                         帳號欄位為必填.
                                     </div>
@@ -52,7 +52,7 @@
 
                                 <div class="col-sm-6">
                                     <label for="user_name" class="form-label">姓名</label>
-                                    <input type="text" class="form-control" id="user_name" placeholder="" value="" required>
+                                    <input type="text" class="form-control" id="user_name" name="user_name" placeholder="" value="" required>
                                     <div class="invalid-feedback">
                                         姓名欄位為必填.
                                     </div>
@@ -257,7 +257,7 @@
                                 <div class="col-sm-6">
                                     <label for="user_password1" class="form-label">密碼</label>
                                     <div class="input-group">
-                                        <input type="password" class="form-control" id="user_password1" placeholder="請輸入密碼" required>
+                                        <input type="password" class="form-control" id="user_password1" name="password" placeholder="請輸入密碼" required>
                                         <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                             <i class="bi bi-eye"></i>
                                         </button>
@@ -269,7 +269,12 @@
 
                                 <div class="col-sm-6">
                                     <label for="user_password2" class="form-label">確認密碼</label>
-                                    <input type="password" class="form-control" id="user_password2" placeholder="請再次輸入密碼" required>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="user_password2" placeholder="請再次輸入密碼" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                    </div>
                                     <div class="invalid-feedback">
                                         確認密碼欄位為必填.
                                     </div>
@@ -288,8 +293,7 @@
                                 <input type="hidden" id="bossAuto" data-auto="{{ $boss_auto }}" value="">
                                 <input type="hidden" id="teamAuto" data-auto="{{ $team_auto }}" value="">
                                 <input type="hidden" id="fac_auto" data-auto="{{ $fac_auto }}" value="">
-                            </div>
-                            
+                            </div>                            
                         </form>
                     </div>
                 </div>
