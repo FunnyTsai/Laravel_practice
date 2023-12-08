@@ -90,9 +90,6 @@
                                     <label for="user_boss" class="form-label">主管</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="user_boss" placeholder="請輸入主管姓名" value="">
-                                        {{-- <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div> --}}
                                     </div>
                                 </div>
 
@@ -114,10 +111,7 @@
                                 <div class="col-sm-6">
                                     <label for="team" class="form-label">組別</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="team" placeholder="" value="">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
+                                        <input type="text" class="form-control" id="team" placeholder="請輸入組別" value="">
                                     </div>
                                 </div>
 
@@ -151,13 +145,11 @@
                                     <input type="email" class="form-control" id="email" placeholder="yourname@arich.com.tw">
                                 </div>
 
+                                {{-- 原廠資料庫顯示英文、頁面顯示中文 --}}
                                 <div class="col-sm-6">
                                     <label for="orig_vendor" class="form-label">原廠</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="orig_vendor" placeholder="" value="">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
+                                        <input type="text" class="form-control" id="orig_vendor" placeholder="請輸入原廠" value="">
                                     </div>
                                 </div>
                             
@@ -245,21 +237,21 @@
 
                                 <div class="col-sm-6">
                                     <label for="meal_fee" class="form-label">誤餐費費用職別</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="meal_fee" placeholder="" value="">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
-                                    </div>
+                                    <select class="form-select" id="meal_fee">
+                                        <option value="">請選擇誤餐費費用職別...</option>
+                                        <option value="PSR009">誤餐津貼_不計日當</option>
+                                        <option value="PSR003">誤餐津貼_業務代表</option>
+                                        <option value="PSR007">誤餐津貼_主任</option>
+                                        <option value="PSR002">誤餐津貼_經理</option>
+                                    </select>
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="trf_fee" class="form-label">交通津貼職別</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="trf_fee" placeholder="" value="">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
-                                    </div>
+                                    <select class="form-select" id="trf_fee">
+                                        <option value="">請選擇誤餐費費用職別...</option>
+                                        <option value="PSR001">交通津貼_業務代表</option>
+                                        <option value="PSR005">交通津貼_主任 </option>
+                                    </select>
                                 </div>
 
                                 <div class="col-sm-6">
@@ -295,6 +287,7 @@
                             <div class='hidden'>                                
                                 <input type="hidden" id="bossAuto" data-auto="{{ $boss_auto }}" value="">
                                 <input type="hidden" id="teamAuto" data-auto="{{ $team_auto }}" value="">
+                                <input type="hidden" id="fac_auto" data-auto="{{ $fac_auto }}" value="">
                             </div>
                             
                         </form>

@@ -1,31 +1,34 @@
+function common(elemetId, sqlColumn, inputId) {
 
-// 寫一個共用function直接呼叫
-
-$(function() {
-  // let bossAutoData = document.getElementById('bossAuto').getAttribute('data-auto');
-  // let bossAutoObject = JSON.parse(bossAutoData);
-  // let autoArray = [];
-
-  // for(let i = 0; i < bossAutoObject.length; i++ ){
-  //   autoArray.push(bossAutoObject[i]['USER_NAME'])
-  // }
-          
-  // $( "#user_boss" ).autocomplete({
-  //   source: autoArray
-  // });
-
-  let teamAutoData = document.getElementById('teamAuto').getAttribute('data-auto');
-  let teamAutoObject = JSON.parse(teamAutoData);
+  let autoData = document.getElementById(`${elemetId}`).getAttribute('data-auto');
+  let autoObject = JSON.parse(autoData);
   let autoArray = [];
 
-
-  for(let i = 0; i < teamAutoObject.length; i++ ){
-    if(teamAutoObject[i]['TEAM'] != null && teamAutoObject[i]['TEAM'] != ''){
-      autoArray.push(teamAutoObject[i]['TEAM'])
+  for(let i = 0; i < autoObject.length; i++ ){
+    if(autoObject[i][sqlColumn] != null && autoObject[i][sqlColumn] != ''){
+      autoArray.push(autoObject[i][sqlColumn])
     }
   }
-          
-  $("#team").autocomplete({
+
+  $(`#${inputId}`).autocomplete({
     source: autoArray
   });
+}
+
+$(document).on('keydown', '#team', function(e) {
+  common('teamAuto', 'TEAM', 'team');
+})
+
+$(document).on('keydown', '#user_boss', function(e) {
+  common('bossAuto', 'USER_NAME', 'user_boss');
+})
+
+$(document).on('keydown', '#orig_vendor', function(e) {
+  common('fac_auto', 'Fac', 'orig_vendor');
+})
+
+// 新增的時候把原廠的英文存入#fac_auto的value中
+// fac_auto_value = (document.getElementById('orig_vendor').value).split(' ')[0];
+
+$(function() {
 });

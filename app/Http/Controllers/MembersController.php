@@ -35,6 +35,7 @@ class MembersController extends Controller
         return redirect()->route('root')->with('notice','會員資料已成功新增！');
     }
 
+    // boss建議選項
     public function boss(){        
         $data = DB::table('USERS_TEST')
                     ->select('USER_NAME')
@@ -42,9 +43,20 @@ class MembersController extends Controller
                     ->get();
         return $data;
     }
+
+    // team建議選項
     public function team(){        
         $data = DB::table('USERS_TEST')
                     ->select('TEAM')
+                    ->distinct()
+                    ->get();
+        return $data;
+    }
+
+    // 原廠建議選項
+    public function fac(){        
+        $data = DB::table('FACTORY_TEST')
+                    ->select(DB::raw("CONCAT(Fac_Code, ' ', Fac_Name) AS Fac"))
                     ->distinct()
                     ->get();
         return $data;
@@ -55,7 +67,13 @@ class MembersController extends Controller
         
         $boss_auto = $this->boss();
         $team_auto = $this->team();
-        return view("member.create", ['data' => $data, 'boss_auto' => $boss_auto, 'team_auto' => $team_auto]);;
+        $fac_auto = $this->fac();
+        return view("member.create", [
+                                        'data' => $data, 
+                                        'boss_auto' => $boss_auto, 
+                                        'team_auto' => $team_auto, 
+                                        'fac_auto' => $fac_auto
+                                    ]);;
     }
 
     public function list($USER_ID){
@@ -137,5 +155,4 @@ class MembersController extends Controller
     
     //     return redirect()->route('root')->with('notice', '選取項目已成功刪除！');
     // }
-    
 }
