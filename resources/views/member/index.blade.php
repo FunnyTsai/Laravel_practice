@@ -1,8 +1,10 @@
 
 {{-- 檢查傳送過來的資料 --}}
-{{-- @isset($userData)
-    {{ dd($userData) }}
-@endisset  --}}
+@isset($userData)
+    {{-- @foreach ($userData as $user)
+        {{ dd($user->USER_ID) }}；
+    @endforeach --}}
+@endisset 
 
 <!DOCTYPE html>
 <html lang="en">
@@ -25,7 +27,8 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.4/extensions/filter-control/bootstrap-table-filter-control.js"></script>
    
     <!-- 引入bootstrap table的中文語言包 -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.18.3/locale/bootstrap-table-zh-TW.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.4/bootstrap-table-locale-all.min.js"></script>
+    {{-- <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-table/1.21.4/locale/bootstrap-table-zh-TW.min.js"></script> --}}
   
     <!-- 引入 Bootstrap Table CSS -->
     <link rel="stylesheet" href="{{ asset('bootstrap-table/bootstrap-table.min.css') }}">
@@ -44,6 +47,7 @@
     </style>
 </head>
 <body>
+
     @if(session('notice'))
         <div class="alert alert-success">
             {{ session('notice') }}
@@ -70,16 +74,19 @@
             data-search="true"
             data-pagination="true"
             data-page-size="14"
-            data-show-search-clear-button="true">
+            data-show-search-clear-button="true"
+            data-locale="zh-TW"
+            >
             <thead>
                 <tr>
                     <th data-field="0" data-checkbox="true"></th>  
-                    <th data-field="USER_ID" data-filter-control="input">員工編號</th>
-                    <th data-field="USER_NAME" data-filter-control="input">姓名</th>
-                    <th data-field="USER_GROUP" data-filter-control="select">部門</th>
-                    <th data-field="USER_ZONE" data-filter-control="select">區域</th>
-                    <th data-field="TEAM" data-filter-control="input">組別</th>
-                    <th data-field="USER_ROLE" data-filter-control="select">角色</th>
+                    <th data-field="USER_ID" data-filter-control="input" data-sortable="true">員工編號</th>
+                    <th data-field="USER_NAME" data-filter-control="input" data-sortable="true">姓名</th>
+                    <th data-field="USER_GROUP" data-filter-control="select" data-sortable="true">部門</th>
+                    <th data-field="USER_ZONE" data-filter-control="select" data-sortable="true">區域</th>
+                    <th data-field="TEAM" data-filter-control="input" data-sortable="true">組別</th>
+                    <th data-field="USER_ROLE" data-filter-control="select" data-sortable="true">角色</th>
+                    <th data-field="USER_BOSS" data-filter-control="input" data-sortable="true">主管</th>
                 </tr>
             </thead>
             <tbody>
@@ -88,9 +95,9 @@
                         <td>
                             <input type="checkbox" name="btSelectItem" value="{{ $user->USER_ID }}">
                         </td>
-                        {{-- edit需要傳送member參數  --}}
+                        {{-- edit需要傳送member參數 --}}
                         {{-- <td><a href="{{ route('member.edit', ['member' => $user->USER_ID]) }}">{{ $user->USER_ID }}</a></td> --}}
-                        <td><a href="{{ route('member.edit', $user) }}">{{ $user->USER_ID }}</a></td>
+                        <td><a href="{{ route('member.edit', $user->USER_ID) }}">{{ $user->USER_ID }}</a></td>    
                         <td>{{ $user->USER_NAME }}</td>
                         <td>{{ $user->USER_GROUP }}</td>
                         <td>{{ $user->USER_ZONE }}</td>
@@ -137,6 +144,7 @@
                                 一般使用者
                             @endswitch
                         </td>
+                        <td>{{ $user->BOSS_NAME }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -144,7 +152,7 @@
 
         <div class="d-flex justify-content-end">
             <a class="btn btn-primary" href="{{ route('member.create') }}">新增帳號</a>
-            <form action="{{ route('member.destroy', $user)}}" method="post">
+            <form action="{{ route('member.destroy', $user->USER_ID)}}" method="post">
                 {{-- <form id="deleteForm" action="{{ route('member.bulkDestroy') }}" method="post"> --}}
                 @csrf
                 @method('delete')

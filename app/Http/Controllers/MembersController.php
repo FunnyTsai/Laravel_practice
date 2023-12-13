@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Member;
+use App\Models\Test;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
@@ -16,30 +17,105 @@ class MembersController extends Controller
     
     public function index()
     {
-        $userData = Member::where('ORG_ID', '84')->get();
-        // $userData = Member::where('USER_NAME', 'TEST')->get();
+        // $userData = Member::where('ORG_ID', '84')->get();
+
+        $userData = Member::select('UT1.*', 'UT2.USER_NAME AS BOSS_NAME')
+                    ->from('USERS_TEST AS UT1')
+                    ->leftjoin('USERS_TEST AS UT2', 'UT1.USER_BOSS', '=', 'UT2.USER_ID')
+                    ->where('UT1.ORG_ID', '84')
+                    // ->where('UT1.USER_ID', 'W34000')
+                    ->get();
+
         return view('member.index', ['userData' => $userData]);
     }
 
     // 會接收前端post過來的參數
     public function store(Request $request){
+
+        // dd($request->all()); 
+
         // 要與<input>參數name的變數名稱對應
-        $content = $request -> validate([
-            'user_id' => 'required|min:7|max:7',
-            'user_name' => 'required',
-            'user_password1' => 'required'
+        // $content = $request -> validate([
+        //     'user_id' => 'required|min:7|max:7',
+        //     'user_password1' => 'required'
+        // ]);
+
+        $user_id = $request->input('user_id');
+        $user_name = $request->input('user_name');
+        $user_group = $request->input('user_group');
+        $user_zone = $request->input('user_zone');
+        $user_boss = $request->input('user_boss');
+        $user_role = $request->input('user_role');
+        $team = $request->input('team');
+        $attribute1 = $request->input('attribute1');
+        $user_mail = $request->input('user_mail');
+        $orig_vendor = $request->input('orig_vendor');
+        $mail = $request->input('mail');
+        $salesrep_id = $request->input('salesrep_id');
+        $collector_id = $request->input('collector_id');
+        $ord_amt = $request->input('ord_amt');
+        $ord_dis_amt = $request->input('ord_dis_amt');
+        $user_schedule = $request->input('user_schedule');
+        $org_id = $request->input('org_id');
+        $meal_fee = $request->input('meal_fee');
+        $trf_fee = $request->input('trf_fee');
+        $user_password1 = $request->input('user_password1');
+        $user_password2 = $request->input('user_password2');
+
+        date_default_timezone_set('Asia/Taipei');
+        $creation_date = date('Y/m/d H:i:s');
+
+        if ($user_password1 != $user_password2) {
+            return redirect()->back()->with('error', '密碼輸入不一致');
+        }
+
+        if ($attribute1 != '') {
+            $attribute1 = (explode(' ', $attribute1))[0];
+        } 
+
+        if ($orig_vendor != '') {
+            $orig_vendor = (explode(' ', $orig_vendor))[0];
+        } 
+
+        // insert進資料表
+        Member::insert([
+            'user_id' => $user_id,
+            'user_name' => $user_name,
+            'user_group' => $user_group,
+            'user_zone' => $user_zone,
+            'user_boss' => $user_boss,
+            'user_role' => $user_role,
+            'team' => $team,
+            'attribute1' => $attribute1,
+            'user_mail' => $user_mail,
+            'orig_vendor' => $orig_vendor,
+            'mail' => $mail,
+            'salesrep_id' => $salesrep_id,
+            'collector_id' => $collector_id,
+            'ord_amt' => $ord_amt,
+            'ord_dis_amt' => $ord_dis_amt,
+            'user_schedule' => $user_schedule,
+            'org_id' => $org_id,
+            'meal_fee' => $meal_fee,
+            'trf_fee' => $trf_fee,
+            'user_password' => md5($user_password1),
+            'creation_date' => $creation_date
         ]);
+        return redirect()->route('root')->with('notice', '會員資料已成功新增！');
+        
+        // print_r($content);
+        // echo '<h1>' . $user_password1  . '</h1>';
 
         // 呼叫Member Model寫進資料庫 
-        members()->create($content);
+        // members()->create($content);
         // 跳轉到首頁
-        return redirect()->route('root')->with('notice','會員資料已成功新增！');
     }
 
     // boss建議選項
     public function boss(){        
         $data = DB::table('USERS_TEST')
-                    ->select('USER_NAME')
+                    ->select(DB::raw("CONCAT(USER_ID, ' ', USER_NAME) AS BOSS"))
+                    // ->select('USER_NAME')
                     ->where('USER_ROLE', 'E')
                     ->get();
         return $data;
@@ -63,17 +139,31 @@ class MembersController extends Controller
         return $data;
     }
 
+    // 差勤員工編號建議選項
+    public function attribute1(){        
+
+        // $data = Member::select('USER_ID','USER_NAME')
+        $data = Member::select(DB::raw("CONCAT(USER_ID, ' ', USER_NAME) AS USER_INFO"))
+                ->where('ORG_ID', '84')
+                ->distinct()
+                ->get();
+        return $data;
+    }
+
     public function create(){
         $data = $this->getUserData();
         
         $boss_auto = $this->boss();
         $team_auto = $this->team();
         $fac_auto = $this->fac();
+        $attribute1_auto = $this->attribute1();
+
         return view("member.create", [
                         'data' => $data, 
                         'boss_auto' => $boss_auto, 
                         'team_auto' => $team_auto, 
-                        'fac_auto' => $fac_auto
+                        'fac_auto' => $fac_auto, 
+                        'attribute1_auto' => $attribute1_auto
                     ]);
     }
 
@@ -86,25 +176,116 @@ class MembersController extends Controller
         $data = $this->getUserData($USER_ID);
         $member = member::find($USER_ID);     
 
-        $collector_name = DB::table('A_AR_COLLECTOR_TEST')
-                            ->select('NAME')
-                            ->where('COLLECTOR_ID', $member->COLLECTOR_ID)
-                            ->first();      
+        if ($member->COLLECTOR_ID) {            
+            $collector_name = DB::table('A_AR_COLLECTOR_TEST')
+                                ->select('NAME')
+                                ->where('COLLECTOR_ID', $member->COLLECTOR_ID)
+                                ->first(); 
 
+            $data['collector_name'] = $collector_name;
+        } 
+
+        if ($member->ATTRIBUTE1) {            
+            $attribute1_name = member::select('USER_NAME')
+                                ->where('USER_ID', $member->ATTRIBUTE1)
+                                ->first(); 
+
+            $data['attribute1_name'] = $attribute1_name;
+        }
+
+        if ($member->USER_BOSS) {            
+            $boss_name = member::select('USER_NAME')
+                                ->where('USER_ID', $member->USER_BOSS)
+                                ->first(); 
+
+            $data['boss_name'] = $boss_name;
+        }
+             
         $data['member'] = $member;
-        $data['collector_name'] = $collector_name;
         
         $boss_auto = $this->boss();
         $team_auto = $this->team();
         $fac_auto = $this->fac();
+        $attribute1_auto = $this->attribute1();
 
         return view("member.edit", [
                         'data' => $data, 
                         'member' => $member, 
                         'boss_auto' => $boss_auto, 
                         'team_auto' => $team_auto, 
-                        'fac_auto' => $fac_auto
+                        'fac_auto' => $fac_auto, 
+                        'attribute1_auto' => $attribute1_auto
                     ]);
+    }
+
+    public function update(Request $request, $USER_ID){  
+        
+        $user_name = $request->input('user_name');
+        $user_group = $request->input('user_group');
+        $user_zone = $request->input('user_zone');
+        $user_boss = $request->input('user_boss');
+        $user_role = $request->input('user_role');
+        $team = $request->input('team');
+        $attribute1 = $request->input('attribute1');
+        $user_mail = $request->input('user_mail');
+        $orig_vendor = $request->input('orig_vendor');
+        $mail = $request->input('mail');
+        $salesrep_id = $request->input('salesrep_id');
+        $collector_id = $request->input('collector_id');
+        $ord_amt = $request->input('ord_amt');
+        $ord_dis_amt = $request->input('ord_dis_amt');
+        $user_schedule = $request->input('user_schedule');
+        $org_id = $request->input('org_id');
+        $meal_fee = $request->input('meal_fee');
+        $trf_fee = $request->input('trf_fee');
+        $user_password1 = $request->input('user_password1');
+        $user_password2 = $request->input('user_password2');
+
+        date_default_timezone_set('Asia/Taipei');
+        $last_update_date = date('Y/m/d H:i:s');
+
+        if ($user_password1 != $user_password2) {
+            return redirect()->back()->with('error', '密碼輸入不一致');
+        }
+
+        if ($attribute1 != '') {
+            $attribute1 = (explode(' ', $attribute1))[0];
+        } 
+
+        if ($orig_vendor != '') {
+            $orig_vendor = (explode(' ', $orig_vendor))[0];
+        } 
+
+        if ($user_boss != '') {
+            $user_boss = (explode(' ', $user_boss))[0];
+        } 
+
+        // insert進資料表
+        Member::where('user_id', $USER_ID)
+                ->update([
+                    'user_name' => $user_name,
+                    'user_group' => $user_group,
+                    'user_zone' => $user_zone,
+                    'user_boss' => $user_boss,
+                    'user_role' => $user_role,
+                    'team' => $team,
+                    'attribute1' => $attribute1,
+                    'user_mail' => $user_mail,
+                    'orig_vendor' => $orig_vendor,
+                    'mail' => $mail,
+                    'salesrep_id' => $salesrep_id,
+                    'collector_id' => $collector_id,
+                    'ord_amt' => $ord_amt,
+                    'ord_dis_amt' => $ord_dis_amt,
+                    'user_schedule' => $user_schedule,
+                    'org_id' => $org_id,
+                    'meal_fee' => $meal_fee,
+                    'trf_fee' => $trf_fee,
+                    'user_password' => md5($user_password1),
+                    'LAST_UPDATE_DATE' => $last_update_date
+                ]);
+        return redirect()->back()->with('notice', '會員資料已成功編輯！');
+                
     }
 
     function getUserData(){

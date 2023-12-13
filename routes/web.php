@@ -15,9 +15,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::get('/', function () {
+    return view('welcome');
+});
 
 // // 測試是否能正確取得資料表資料 
 // Route::get('/', function () {
@@ -29,12 +29,12 @@ use Illuminate\Support\Facades\Route;
 Route::resource('member', MembersController::class);
 // Route::delete('/member/bulk-destroy', [MembersController::class, 'bulkDestroy'])->name('member.bulkDestroy');
 
-Route::get('/userData', [MembersController::class, 'getUserData'])->name('userData.json');
+// Route::get('/userData', [MembersController::class, 'getUserData'])->name('userData.json');
 
 
 // 單獨使用get定義的index方法
 // 指定名字為root後，當未來root指向的位子更改時就會一起更動，方便維護
-Route::get('/', [MembersController::class, 'index'])->name('root');
+// Route::get('/', [MembersController::class, 'index'])->name('root');
 
 
 Route::get('/dashboard', function () {
@@ -45,11 +45,6 @@ Route::get('/dashboard', function () {
 // Route::get('/sidebar', function () {
 //     return view('layouts.sidebar');
 // });
-
-
-Route::get('/test', function () {
-    return view('layouts.modal');
-});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

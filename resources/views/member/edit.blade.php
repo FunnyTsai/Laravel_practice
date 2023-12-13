@@ -1,8 +1,11 @@
 
 {{-- 檢查傳送過來的資料 --}}
-{{-- @isset($member)
-    {{ dd($member) }}
-@endisset  --}}
+@isset($member)
+    {{-- {{ dd($member) }} --}}
+    {{-- {{ dd($member['collector_name']) }}
+    {{ dd($member['attribute1_name']) }} --}}
+
+@endisset 
 
 <!DOCTYPE html>
 <html lang="en">
@@ -31,20 +34,22 @@
     @endsection
 
     @section('main')
-        <h1 class="fw-bold">帳號資料【編輯】</h1>
+       
+        @include('components.breadcrumb_member', ['title' => '編輯'])
 
         <div class="d-flex justify-content-center">
             <div class="container-fluid">
                 <div class="row justify-content-center">
                     <div class="col-sm-8">
-                        <form class="needs-validation" novalidate>
-                            
+                        <form class="needs-validation" action="{{route('member.update', $member)}}" novalidate method="post" required>
+                            @csrf
+                            @method('patch')
                             <hr class="my-4">
 
                             <div class="row g-3">
                                 <div class="col-sm-6">
                                     <label for="user_id" class="form-label">帳號</label>
-                                    <input type="text" class="form-control" id="user_id" value="{{ $member['USER_ID'] }}" placeholder="" maxlength="7" required>
+                                    <input type="text" class="form-control" id="user_id" name="user_id" value="{{ $member['USER_ID'] }}" placeholder="" maxlength="7" disabled>
                                     <div class="invalid-feedback">
                                         帳號欄位為必填.
                                     </div>
@@ -52,7 +57,7 @@
 
                                 <div class="col-sm-6">
                                     <label for="user_name" class="form-label">姓名</label>
-                                    <input type="text" class="form-control" id="user_name" value="{{ $member['USER_NAME'] }}" placeholder="" required>
+                                    <input type="text" class="form-control" id="user_name" name="user_name" value="{{ $member['USER_NAME'] }}" placeholder="" required>
                                     <div class="invalid-feedback">
                                         姓名欄位為必填.
                                     </div>
@@ -60,7 +65,7 @@
                             
                                 <div class="col-md-6">
                                     <label for="user_group" class="form-label">部門</label>
-                                    <select class="form-select" id="user_group" required>
+                                    <select class="form-select" name="user_group" required>
                                         <option value="">請選擇部門...</option>
                                         @foreach($data['group'] as $item)
                                             <option value='{{ $item -> VLS_CODE }}'
@@ -77,7 +82,7 @@
                             
                                 <div class="col-md-6">
                                     <label for="user_zone" class="form-label">區域</label>
-                                    <select class="form-select" id="user_zone" required>
+                                    <select class="form-select" name="user_zone" required>
                                         <option value="">請選擇區域...</option>
                                         @foreach($data['zone'] as $item)
                                             <option value='{{ $item -> VLS_CODE }}'
@@ -94,17 +99,21 @@
 
                                 <div class="col-sm-6">
                                     <label for="user_boss" class="form-label">主管</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="user_boss" placeholder="請輸入主管姓名" value="{{ $member -> USER_BOSS }}">
+                                    <div class="input-group">                                
+                                        @if ($member->ATTRIBUTE1 && isset($data['attribute1_name']))
+                                            <input type="text" class="form-control" id="user_boss" name="user_boss" placeholder="請輸入主管姓名" value="{{ $member-> USER_BOSS }} {{ $member -> BOSS_NAME }}">
+                                        @else
+                                            <input type="text" class="form-control" id="user_boss" name="user_boss" placeholder="請輸入主管姓名" value="">
+                                        @endif
                                     </div>
                                 </div>
 
                                 <div class="col-md-6">
                                     <label for="user_role" class="form-label">角色</label>
-                                    <select class="form-select" id="user_role" required>
+                                    <select class="form-select" name="user_role" required>
                                         <option value="">請選擇角色...</option>
                                         @foreach($data['role'] as $item)
-                                            <option value='{{ $item -> PHR_NAME }}' 
+                                            <option value='{{ $item -> PHR_TYPE }}' 
                                                 @if($item->PHR_TYPE == $member->USER_ROLE) selected 
                                                 @endif>
                                                 {{ $item -> PHR_NAME }}
@@ -119,50 +128,37 @@
                                 <div class="col-sm-6">
                                     <label for="team" class="form-label">組別</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="team" placeholder="請輸入組別" value="{{ $member -> TEAM }}">
+                                        <input type="text" class="form-control" id="team" name="team" placeholder="請輸入組別" value="{{ $member -> TEAM }}">
                                     </div>
                                 </div>
 
-                                {{-- <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">行動電話</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="" value="">
-                                </div>
-
-                                <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">電話</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="" value="">
-                                </div>
-
-                                <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">傳真</label>
-                                    <input type="text" class="form-control" id="firstName" placeholder="" value="">
-                                </div> --}}
-
                                 <div class="col-sm-6">
                                     <label for="attribute1" class="form-label">差勤員工編號</label>
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" id="attribute1" placeholder="" value="">
-                                        <div class="input-group-append">
-                                            <a class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#bosstModal">選擇</a>
-                                        </div>
+                                    <div class="input-group">                                        
+                                        @if ($member->ATTRIBUTE1 && isset($data['attribute1_name']))
+                                            <input type="text" class="form-control" id="attribute1" name="attribute1" value="{{ $member->ATTRIBUTE1 }} {{ $data['attribute1_name']-> USER_NAME }}">
+                                        @else
+                                            <input type="text" class="form-control" id="attribute1" name="attribute1" value="">
+                                        @endif
                                     </div>
                                 </div>
 
                                 <div class="col-12">
                                     <label for="email" class="form-label">電子信箱</label>
-                                    <input type="email" class="form-control" id="email" placeholder="yourname@arich.com.tw" value="{{ $member -> USER_MAIL }}">
+                                    <input type="email" class="form-control" name="user_mail" placeholder="yourname@arich.com.tw" value="{{ $member -> USER_MAIL }}">
                                 </div>
-
+                                
+                                {{-- 原廠資料庫顯示英文、頁面顯示中文 --}}
                                 <div class="col-sm-6">
-                                    <label for="firstName" class="form-label">原廠</label>
+                                    <label for="orig_vendor" class="form-label">原廠</label>
                                     <div class="input-group">
-                                        <input type="text" class="form-control" id="orig_vendor" placeholder="請輸入原廠" value="">
+                                        <input type="text" class="form-control" id="orig_vendor" name="orig_vendor" placeholder="請輸入原廠" value="{{ $member -> ORIG_VENDOR }}">
                                     </div>
                                 </div>
                             
                                 <div class="col-md-6">
                                     <label for="mail" class="form-label">標案訊息</label>
-                                    <select class="form-select" id="mail" required>
+                                    <select class="form-select" name="mail" required>
                                         <option value="">請選擇標案訊息...</option>
                                         <option value="Y"
                                             @if($member->MAIL == "Y") selected 
@@ -180,21 +176,25 @@
 
                                 <div class="col-sm-6">
                                     <label for="salesrep_id" class="form-label">業務員ID</label>
-                                    <input type="text" class="form-control" id="salesrep_id" placeholder="" value="{{ $member ->SALESREP_ID }}">
+                                    <input type="text" class="form-control" name="salesrep_id" placeholder="" value="{{ $member ->SALESREP_ID }}">
                                 </div>
                                 
                                 <div class="mb-3 col-md-3">
                                     <label for="teacher_1" class="form-label">收款員ID</label>
-                                    <input type="text" class="form-control" id="collector_id" placeholder="" value="{{ $member->COLLECTOR_ID }}">
+                                    <input type="text" class="form-control" name="collector_id" placeholder="" value="{{ $member->COLLECTOR_ID }}">
                                 </div>
                                 <div class="mb-3 col-md-3">
                                     <label for="teacher_1" class="form-label" style="color:white">I</label>
-                                    <input type="text" class="form-control" id="collector_name" value="{{ $member->COLLECTOR_ID }} ({{ $data['collector_name']->NAME }})" style="color:red; font-weight:600" disabled>
+                                    @if ($member->COLLECTOR_ID && isset($data['collector_name']))
+                                        <input type="text" class="form-control" id="collector_name" value="{{ $member->COLLECTOR_ID }} ({{ $data['collector_name']->NAME }})" style="color:red; font-weight:600" disabled>
+                                    @else
+                                        <input type="text" class="form-control" id="collector_name" value="{{ $member->COLLECTOR_ID }}" style="color:red; font-weight:600" disabled>
+                                    @endif
                                 </div>
                             
                                 <div class="col-md-6">
                                     <label for="ord_amt" class="form-label">訂單金額</label>
-                                    <select class="form-select" id="ord_amt">
+                                    <select class="form-select" name="ord_amt">
                                         <option value="">請選擇訂單金額...</option>
                                         <option value="Y" 
                                             @if($member->ORD_AMT == 'Y') selected 
@@ -214,7 +214,7 @@
                             
                                 <div class="col-md-6">
                                     <label for="ord_dis_amt" class="form-label">訂單折讓金額</label>
-                                    <select class="form-select" id="ord_dis_amt">
+                                    <select class="form-select" name="ord_dis_amt">
                                         <option value="">請選擇訂單折讓金額...</option>
                                         <option value="Y" 
                                             @if($member->ORD_DIS_AMT == 'Y') selected 
@@ -231,7 +231,7 @@
                             
                                 <div class="col-md-6">
                                     <label for="user_schedule" class="form-label">行事曆預設</label>
-                                    <select class="form-select" id="user_schedule">
+                                    <select class="form-select" name="user_schedule">
                                         <option value="">請選擇行事曆預設...</option>
                                         <option value="1" 
                                             @if($member->USER_SCHEDULE == '1') selected 
@@ -253,7 +253,7 @@
 
                                 <div class="col-md-6">
                                     <label for="org_id" class="form-label">ORG預設</label>
-                                    <select class="form-select" id="org_id" required>
+                                    <select class="form-select" name="org_id" required>
                                         <option value="">請選擇ORG預設...</option>
                                         @foreach($data['org'] as $item)
                                             <option value='{{ $item -> ORG_ID }}'
@@ -270,7 +270,7 @@
 
                                 <div class="col-sm-6">
                                     <label for="meal_fee" class="form-label">誤餐費費用職別</label>
-                                    <select class="form-select" id="meal_fee">
+                                    <select class="form-select" name="meal_fee">
                                         <option value="">請選擇誤餐費費用職別...</option>
                                         <option value="PSR009"
                                             @if($member->MEAL_FEE == 'PSR009') selected 
@@ -292,7 +292,7 @@
                                 </div>
                                 <div class="col-sm-6">
                                     <label for="trf_fee" class="form-label">交通津貼職別</label>
-                                    <select class="form-select" id="trf_fee">
+                                    <select class="form-select" name="trf_fee">
                                         <option value="">請選擇誤餐費費用職別...</option>
                                         <option value="PSR001"
                                             @if($member->TRF_FEE == 'PSR001') selected 
@@ -308,26 +308,20 @@
                                 <div class="col-sm-6">
                                     <label for="user_password1" class="form-label">密碼</label>
                                     <div class="input-group">
-                                        <input type="password" class="form-control" id="user_password1" placeholder="請輸入密碼" required>
+                                        <input type="password" class="form-control" id="user_password1" name="user_password1" placeholder="請輸入密碼">
                                         <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                    </div>
-                                    <div class="invalid-feedback">
-                                        密碼欄位為必填.
                                     </div>
                                 </div>
 
                                 <div class="col-sm-6">
                                     <label for="user_password2" class="form-label">確認密碼</label>
                                     <div class="input-group">
-                                        <input type="password" class="form-control" id="user_password2" placeholder="請再次輸入密碼" required>
+                                        <input type="password" class="form-control" id="user_password2" name="user_password2" placeholder="請再次輸入密碼">
                                         <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                    </div>
-                                    <div class="invalid-feedback">
-                                        確認密碼欄位為必填.
                                     </div>
                                 </div>
                             </div>
@@ -336,15 +330,16 @@
 
                             <div class="text-end">
                                 {{-- <button class="btn btn-primary btn-lg" type="submit">Continue to checkout</button> --}}
-                                <button class="btn btn-success" type="submit" href="{{ route('member.create') }}">確定存檔</button>
+                                <button class="btn btn-success" type="submit">確定存檔</button>
                                 <a class="btn btn-light" href="{{ route('member.index') }}">回主畫面</a>
                             </div>
 
                             <div class='hidden'>                                
-                                <input type="hidden" id="bossAuto" data-auto="{{ $boss_auto }}" value="">
-                                <input type="hidden" id="teamAuto" data-auto="{{ $team_auto }}" value="">
-                                <input type="hidden" id="fac_auto" data-auto="{{ $fac_auto }}" value="">
-                            </div>  
+                                <input type="hidden" id="bossAuto" data-auto="{{ $boss_auto }}">
+                                <input type="hidden" id="teamAuto" data-auto="{{ $team_auto }}">
+                                <input type="hidden" id="facAuto" data-auto="{{ $fac_auto }}">
+                                <input type="hidden" id="attribute1Auto" data-auto="{{ $attribute1_auto }}">
+                            </div> 
                         </form>
                     </div>
                 </div>
