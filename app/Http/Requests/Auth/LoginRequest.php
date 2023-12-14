@@ -5,9 +5,11 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
+use App\Models\User;
 
 class LoginRequest extends FormRequest
 {
@@ -27,11 +29,10 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'user_id' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
-
     /**
      * Attempt to authenticate the request's credentials.
      *
@@ -41,13 +42,24 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        $user_id = $this->input('user_id');
+        $password = $this->input('password');
+
+        $user = User::where('USER_ID', $user_id)->first();
+
+        // dd(md5($password));
+        // dd($user->USER_PASSWORD);
+
+        if (!$user || strcasecmp($user->USER_PASSWORD, md5($password)) !== 0) {
+            
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'user_id' => '登入失敗，請確認帳號密碼是否有誤！',
             ]);
         }
+
+        Auth::login($user, $this->boolean('remember'));
 
         RateLimiter::clear($this->throttleKey());
     }
@@ -73,6 +85,7 @@ class LoginRequest extends FormRequest
                 'minutes' => ceil($seconds / 60),
             ]),
         ]);
+        
     }
 
     /**

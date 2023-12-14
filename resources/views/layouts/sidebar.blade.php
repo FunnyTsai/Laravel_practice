@@ -11,7 +11,7 @@
 <body>
 
   <!-- 左側工作區 -->
-  <div class="flex-shrink-0 p-3" style="width: 17%;">
+  <div class="flex-shrink-0 p-3" style="width: 15%;">
       <a href="/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
         <img src="{{ asset('images/ARICH.png') }}" alt="Example Image" style="width: 90%; height: auto;">
       </a>
@@ -99,7 +99,7 @@
           </button>
           <div class="collapse" id="users-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-              <li><a href="{{ route('member')}}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">帳號資料</a></li>
+              <li><a href="{{ route('member.index')}}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">帳號資料</a></li>
               <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">業務群組維護</a></li>   
             </ul>
           </div>
@@ -190,7 +190,9 @@
           </button>
           <div class="collapse" id="voting-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">帳號資料</a></li>
+              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票資料維護</a></li>
+              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票區</a></li>
+              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票結果查詢</a></li>
             </ul>
           </div>
         </li>
@@ -275,14 +277,17 @@
           </div>
         </li>
         <li class="mb-1">
-          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" aria-expanded="false">
-            登出
-          </button>
+          <form method="POST" action="{{ route('logout') }}">
+              @csrf
+              <button type="submit" class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" aria-expanded="false">
+                  登出
+              </button>
+          </form>
         </li>
         <li class="border-top my-3"></li>
         <li class="mb-1">
           {{-- <p>登入者：@if(isset($login_user)) {{ $login_user }} @endif</p> --}}
-          <p>登入者：{{ auth()->user()->name ?? '未登入' }}</p>
+          <p>登入者：{{ auth()->user()->USER_NAME ?? '未登入' }}</p>
         </li>
       </ul>
     </div>

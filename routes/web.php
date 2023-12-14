@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MembersController;
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,26 +20,49 @@ Route::get('/', function () {
     return view('auth.login');
 });
 
-// // 測試是否能正確取得資料表資料 
+// Route::get('/welcome', function () {
+//     return view('welcome');
+// });
+
+// 測試是否能正確取得資料表資料 
 // Route::get('/', function () {
 //     var_dump( DB::table('USERS_TEST')->first() );
 // });
 
-// Route::resource會自動產生基本CRUD的route
-// 在MembersController中就可以使用store()、edit()等方法..
+
+/*
+|--------------------------------------------------------------------------
+| 1. Route::resource會自動產生基本CRUD的route，
+|      在MembersController中就可以使用store()、edit()等方法..
+|   
+| 2. name('*','member')可以在blade頁面中使用各方法做連結 
+|    ex:{{ route('member.create') }}
+|   
+| 3. except(['destroy'])可以排除特定的方法
+|   
+| 4. middleware('auth')可以驗證使用者是否有登入
+|--------------------------------------------------------------------------
+*/
 Route::resource('member', MembersController::class)->except([
-    'destroy' // 排除掉destroy
-]);
+    'destroy'
+])->middleware('auth')->name('*','member');
+
+
+/*
+|--------------------------------------------------------------------------
+| 1. 單獨使用get定義的index方法
+|      在MembersController中就可以使用store()、edit()等方法..
+|--------------------------------------------------------------------------
+*/
+// Route::get('/', [MembersController::class, 'index'])->name('member');
 Route::delete('/member/bulkDestroy', [MembersController::class, 'bulkDestroy'])->name('member.bulkDestroy');
-// Route::delete('/member/bulk-destroy', [MembersController::class, 'bulkDestroy'])->name('member.bulkDestroy');
+
+
+Route::get('/home', function () {
+    return view('home');
+})->middleware('auth');
 
 // Route::get('/userData', [MembersController::class, 'getUserData'])->name('userData.json');
-
-
-// 單獨使用get定義的index方法
-// 指定名字為member後，當未來root指向的位子更改時就會一起更動，方便維護
-Route::get('/', [MembersController::class, 'index'])->name('member');
-
 
 Route::get('/dashboard', function () {
     return view('dashboard');

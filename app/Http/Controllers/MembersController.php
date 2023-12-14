@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\Test;
 use Illuminate\Support\Facades\DB;
@@ -101,7 +102,7 @@ class MembersController extends Controller
             'user_password' => md5($user_password1),
             'creation_date' => $creation_date
         ]);
-        return redirect()->route('root')->with('notice', '會員資料已成功新增！');
+        return redirect()->route('member.index')->with('notice', '會員資料已成功新增！');
         
         // print_r($content);
         // echo '<h1>' . $user_password1  . '</h1>';
@@ -327,26 +328,18 @@ class MembersController extends Controller
 
         return $data;
     }
+    
+    public function bulkDestroy(Request $request) {
+        $ids = explode(',', $request->input('deleteIds'));
 
-    public function destroy($USER_ID){
-        // auth()->user()->members->find($USER_ID);
-        $member = member::find($USER_ID);
+        // 刪除所選中的項目 
+        $deletedCount = Member::whereIn('USER_ID', $ids)->delete();
 
-        if (!$member) {
-            return redirect()->route('root')->with('error', '找不到會員資料！');
-        }
-        else{
-            $member->delete();
-            return redirect()->route('root')->with('notice','會員資料已成功刪除！');
+        if ($deletedCount > 0) {
+            return redirect()->route('member.index')->with('notice', '選取項目已成功刪除！');
+        } 
+        else {
+            return redirect()->route('member.index')->with('error', '刪除失敗！');
         }
     }
-    
-    // public function bulkDestroy(Request $request) {
-    //     $ids = explode(',', $request->input('ids'));
-    
-    //     // 刪除所選中的項目 
-    //     Member::whereIn('id', $ids)->delete();
-    
-    //     return redirect()->route('root')->with('notice', '選取項目已成功刪除！');
-    // }
 }
