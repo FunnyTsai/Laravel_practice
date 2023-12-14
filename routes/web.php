@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 // // 測試是否能正確取得資料表資料 
@@ -26,15 +26,18 @@ Route::get('/', function () {
 
 // Route::resource會自動產生基本CRUD的route
 // 在MembersController中就可以使用store()、edit()等方法..
-Route::resource('member', MembersController::class);
+Route::resource('member', MembersController::class)->except([
+    'destroy' // 排除掉destroy
+]);
+Route::delete('/member/bulkDestroy', [MembersController::class, 'bulkDestroy'])->name('member.bulkDestroy');
 // Route::delete('/member/bulk-destroy', [MembersController::class, 'bulkDestroy'])->name('member.bulkDestroy');
 
 // Route::get('/userData', [MembersController::class, 'getUserData'])->name('userData.json');
 
 
 // 單獨使用get定義的index方法
-// 指定名字為root後，當未來root指向的位子更改時就會一起更動，方便維護
-// Route::get('/', [MembersController::class, 'index'])->name('root');
+// 指定名字為member後，當未來root指向的位子更改時就會一起更動，方便維護
+Route::get('/', [MembersController::class, 'index'])->name('member');
 
 
 Route::get('/dashboard', function () {

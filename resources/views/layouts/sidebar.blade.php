@@ -99,7 +99,8 @@
           </button>
           <div class="collapse" id="users-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">帳號資料</a></li>
+              <li><a href="{{ route('member')}}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">帳號資料</a></li>
+              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">業務群組維護</a></li>   
             </ul>
           </div>
         </li>

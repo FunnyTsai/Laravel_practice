@@ -47,13 +47,6 @@
     </style>
 </head>
 <body>
-
-    @if(session('notice'))
-        <div class="alert alert-success">
-            {{ session('notice') }}
-        </div>
-    @endif
-
     @extends('layouts.member')
 
     @section('sidebar')
@@ -152,11 +145,10 @@
 
         <div class="d-flex justify-content-end">
             <a class="btn btn-primary" href="{{ route('member.create') }}">新增帳號</a>
-            <form action="{{ route('member.destroy', $user->USER_ID)}}" method="post">
-                {{-- <form id="deleteForm" action="{{ route('member.bulkDestroy') }}" method="post"> --}}
+            <form id="deleteForm" action="{{ route('member.bulkDestroy') }}" method="post">
                 @csrf
                 @method('delete')
-                <input type="hidden" name="ids" id="deleteIds">
+                <input type="hidden" name="deleteIds" id="deleteIds">
                 <button type="submit" class="btn btn-danger">刪除選取項目</button>
             </form>
         </div>

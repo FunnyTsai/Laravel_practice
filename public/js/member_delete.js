@@ -4,9 +4,29 @@
 //     var selectedIds = $.map(selectedRows, function (row) {
 //         return $(row.USER_ID).text();
 //     });
+//     $('#deleteIds').val(selectedIds);
 //     return selectedIds.join(',');
 //     // $('#deleteIds').val(selectedIds.join(','));
 // }
+
+
+function getSelectedRowsIds() {
+    var selectedRows = $('#table').bootstrapTable('getSelections');
+    var selectedIds = $.map(selectedRows, function (row) {
+        return $(row.USER_ID).text(); 
+    });
+    return selectedIds;
+}
+
+$(document).ready(function () {
+    $('#deleteForm').submit(function (e) {
+        e.preventDefault();
+        var selectedIds = getSelectedRowsIds();
+        $('#deleteIds').val(selectedIds);
+        this.submit();
+    });
+});
+
 
 // $(document).ready(function() {
 //     $.ajaxSetup({
