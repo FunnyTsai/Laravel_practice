@@ -102,6 +102,14 @@ class MembersController extends Controller
             'user_password' => md5($user_password1),
             'creation_date' => $creation_date
         ]);
+
+        // 新增群組
+        // 取得群組存入資料庫的代號
+        // select PHR_TYPE
+        // from phrase_TEST
+        // where PHR_NAME ='差勤簽核系統(加班-業代)'
+
+        
         return redirect()->route('member.index')->with('notice', '會員資料已成功新增！');
         
         // print_r($content);
@@ -119,6 +127,7 @@ class MembersController extends Controller
                     // ->select('USER_NAME')
                     ->where('USER_ROLE', 'E')
                     ->get();
+
         return $data;
     }
 
@@ -128,6 +137,7 @@ class MembersController extends Controller
                     ->select('TEAM')
                     ->distinct()
                     ->get();
+
         return $data;
     }
 
@@ -137,6 +147,7 @@ class MembersController extends Controller
                     ->select(DB::raw("CONCAT(Fac_Code, ' ', Fac_Name) AS Fac"))
                     ->distinct()
                     ->get();
+
         return $data;
     }
 
@@ -148,6 +159,18 @@ class MembersController extends Controller
                 ->where('ORG_ID', '84')
                 ->distinct()
                 ->get();
+
+        return $data;
+    }
+
+    // 群組建議選項
+    public function group(){        
+        $data = DB::table('PHRASE_TEST')
+                ->select('PHR_NAME')
+                ->where('PHR_KIND', '01')
+                ->where('MODIFY_FLAG', '<>', 'D')
+                ->get();
+
         return $data;
     }
 
@@ -157,14 +180,16 @@ class MembersController extends Controller
         $boss_auto = $this->boss();
         $team_auto = $this->team();
         $fac_auto = $this->fac();
-        $attribute1_auto = $this->attribute1();
+        $attribute1_auto = $this->attribute1();        
+        $group_auto = $this->group();
 
         return view("member.create", [
                         'data' => $data, 
                         'boss_auto' => $boss_auto, 
                         'team_auto' => $team_auto, 
                         'fac_auto' => $fac_auto, 
-                        'attribute1_auto' => $attribute1_auto
+                        'attribute1_auto' => $attribute1_auto, 
+                        'group_auto' => $group_auto
                     ]);
     }
 
@@ -201,13 +226,26 @@ class MembersController extends Controller
 
             $data['boss_name'] = $boss_name;
         }
-             
+
+        // 群組資料           
+        $group = DB::table('groups_TEST as g')
+                    ->leftjoin('phrase_TEST as p', function ($join) {
+                        $join->on('g.grp_code', '=', 'p.phr_type')
+                            ->where('p.PHR_KIND', '01')
+                            ->where('p.MODIFY_FLAG', '<>', 'D');
+                    })
+                    ->select('PHR_NAME')
+                    ->where('g.grp_users', $member->USER_ID)
+                    ->get();
+
+        $data['group_info'] = $group;             
         $data['member'] = $member;
         
         $boss_auto = $this->boss();
         $team_auto = $this->team();
         $fac_auto = $this->fac();
         $attribute1_auto = $this->attribute1();
+        $group_auto = $this->group();
 
         return view("member.edit", [
                         'data' => $data, 
@@ -215,7 +253,8 @@ class MembersController extends Controller
                         'boss_auto' => $boss_auto, 
                         'team_auto' => $team_auto, 
                         'fac_auto' => $fac_auto, 
-                        'attribute1_auto' => $attribute1_auto
+                        'attribute1_auto' => $attribute1_auto, 
+                        'group_auto' => $group_auto
                     ]);
     }
 
@@ -285,8 +324,8 @@ class MembersController extends Controller
                     'user_password' => md5($user_password1),
                     'LAST_UPDATE_DATE' => $last_update_date
                 ]);
-        return redirect()->back()->with('notice', '會員資料已成功編輯！');
-                
+
+        return redirect()->back()->with('notice', '會員資料已成功編輯！');     
     }
 
     function getUserData(){

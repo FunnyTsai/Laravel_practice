@@ -17,7 +17,7 @@ function common(elemetId, sqlColumn, inputId) {
     }
   }
 
-  console.log(autoArray);
+  // console.log(autoArray);
 
   $(`#${inputId}`).autocomplete({
     source: autoArray
@@ -40,6 +40,10 @@ $(document).on('keydown', '#orig_vendor', function(e) {
 
 $(document).on('keydown', '#attribute1', function(e) {
   common('attribute1Auto', 'USER_INFO', 'attribute1');
+})
+
+$(document).on('keydown', '#group', function(e) {
+  common('groupAuto', 'PHR_NAME', 'group');
 })
 
 // $(document).on('change', '#attribute1', function(e) {
