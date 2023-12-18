@@ -66,7 +66,7 @@
             data-filter-control="true"
             data-search="true"
             data-pagination="true"
-            data-page-size="14"
+            data-page-size="20"
             data-show-search-clear-button="true"
             data-locale="zh-TW"
             >
