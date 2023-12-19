@@ -11,12 +11,12 @@
 <body>
 
   <!-- 左側工作區 -->
-  <div class="flex-shrink-0 p-3" style="width: 15%;">
+  <div class="flex-shrink-0 p-3" style="width: 16%;">
       <a href="/" class="d-flex align-items-center pb-3 mb-3 link-body-emphasis text-decoration-none border-bottom">
-        <img src="{{ asset('images/ARICH.png') }}" alt="Example Image" style="width: 90%; height: auto;">
+        <img src="{{ asset('images/ARICH.png') }}" alt="Example Image" style="width: 100%; height: auto;">
       </a>
       {{-- max-height: 440px; --}}
-      <ul class="list-unstyled ps-0" style="overflow-y: auto; max-height: 82%;">
+      <ul class="list-unstyled ps-0" style=" max-height: 82%;">
         <li class="mb-1">
           <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" aria-expanded="false">
             首頁
@@ -190,7 +190,7 @@
           </button>
           <div class="collapse" id="voting-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
-              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票資料維護</a></li>
+              <li><a href="{{ route('vote.index') }}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票資料維護</a></li>
               <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票區</a></li>
               <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票結果查詢</a></li>
             </ul>
