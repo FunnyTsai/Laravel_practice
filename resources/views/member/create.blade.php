@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ asset('css/checkout.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/member.css') }}">
     <!-- 引入 jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.2.min.js"></script>
 
@@ -37,30 +38,27 @@
 
         @include('components.breadcrumb_member', ['title' => '新增'])
      
-        <div class="row">
-            <div class="col-md-5 col-lg-4 order-md-last">
-                <h4 class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-primary">加入的群組</span>
-                    <span class="badge bg-primary rounded-pill" id="groupCountBadge">0</span>
-                </h4>
+        <form class="needs-validation" action="{{route('member.store')}}" method="post" required>
+            @csrf
+            <div class="row">
+                <div class="col-md-5 col-lg-4 order-md-last">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-primary">加入的群組</span>
+                        <span class="badge bg-primary rounded-pill" id="groupCountBadge">0</span>
+                    </h4>
 
-                <form class="card p-2" id="addGroupForm">
                     <div class="input-group">
                         <input id="group" type="text" class="form-control" placeholder="請輸入群組名稱(點選建議選項)">
-                        <button type="submit" class="btn btn-primary">新增</button>
+                        <button id="groupSubmit" class="btn btn-primary">新增</button>
                     </div>
-                </form>
 
-                <div class="mt-lg-3">
-                    <ul class="list-group mb-3" id="groupList">
-                        {{-- 系統自動產生 --}}
-                    </ul>
+                    <div class="mt-lg-3">
+                        <ul class="list-group mb-3" id="groupList">
+                        </ul>
+                    </div>
                 </div>
-            </div>
 
-            <div class="col-md-7 col-lg-7">
-                <form class="needs-validation" action="{{route('member.store')}}" novalidate method="post" required>
-                    @csrf
+                <div class="col-md-7 col-lg-7">
                     <hr class="my-4">
 
                     <div class="row g-4">
@@ -74,7 +72,7 @@
 
                         <div class="col-sm-6">
                             <label for="user_name" class="form-label">姓名</label>
-                            <input type="text" class="form-control" id="user_name" name="user_name" placeholder="" value="" required>
+                            <input type="text" class="form-control" value="{{old('user_name')}}" id="user_name" name="user_name" placeholder="" value="" required>
                             <div class="invalid-feedback">
                                 姓名欄位為必填.
                             </div>
@@ -113,7 +111,7 @@
                         <div class="col-sm-6">
                             <label for="user_boss" class="form-label">主管</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="user_boss" name="user_boss" placeholder="請輸入主管姓名" value="">
+                                <input type="text" class="form-control" id="user_boss" name="user_boss" placeholder="請輸入主管姓名" value="{{old('user_boss')}}">
                             </div>
                         </div>
 
@@ -135,30 +133,26 @@
                         <div class="col-sm-6">
                             <label for="team" class="form-label">組別</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="team" name="team" placeholder="請輸入組別" value="">
+                                <input type="text" class="form-control" id="team" name="team" placeholder="請輸入組別" value="{{old('team')}}">
                             </div>
                         </div>
 
                         <div class="col-sm-6">
                             <label for="attribute1" class="form-label">差勤員工編號</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="attribute1" name="attribute1" placeholder="請輸入員工編號" value="">
+                                <input type="text" class="form-control" id="attribute1" name="attribute1" placeholder="請輸入員工編號" value="{{old('attribute1')}}">
                             </div>
                         </div>
-                        {{-- <div class="mb-3 col-md-3">
-                            <label for="attribute1_name" class="form-label" style="color:white">I</label>
-                            <input type="text" class="form-control" id="attribute1_name" style="color:red; font-weight:600" disabled>
-                        </div> --}}
 
                         <div class="col-12">
                             <label for="email" class="form-label">電子信箱</label>
-                            <input type="email" class="form-control" name="user_mail" placeholder="yourname@arich.com.tw">
+                            <input type="email" class="form-control" name="user_mail" placeholder="yourname@arich.com.tw" value="{{old('user_mail')}}">
                         </div>
 
                         <div class="col-sm-6">
                             <label for="orig_vendor" class="form-label">原廠</label>
                             <div class="input-group">
-                                <input type="text" class="form-control" id="orig_vendor" name="orig_vendor" placeholder="請輸入原廠" value="">
+                                <input type="text" class="form-control" id="orig_vendor" name="orig_vendor" placeholder="請輸入原廠" value="{{old('orig_vendor')}}">
                             </div>
                         </div>
                     
@@ -176,12 +170,12 @@
 
                         <div class="col-sm-6">
                             <label for="salesrep_id" class="form-label">業務員ID</label>
-                            <input type="text" class="form-control" name="salesrep_id" placeholder="">
+                            <input type="text" class="form-control" name="salesrep_id" placeholder="" value="{{old('salesrep_id')}}">
                         </div>
 
                         <div class="col-sm-6">
                             <label for="collector_id" class="form-label">收款員ID</label>
-                            <input type="text" class="form-control" name="collector_id" placeholder="">
+                            <input type="text" class="form-control" name="collector_id" placeholder="" value="{{old('collector_id')}}">
                         </div>
                     
                         <div class="col-md-6">
@@ -282,7 +276,7 @@
                         <div class="col-sm-6">
                             <label for="user_password2" class="form-label">確認密碼</label>
                             <div class="input-group">
-                                <input type="password" class="form-control" id="user_password2" placeholder="請再次輸入密碼" required>
+                                <input type="password" class="form-control" id="user_password2" name="user_password2" placeholder="請再次輸入密碼" required>
                                 <button class="btn btn-outline-secondary" type="button" id="togglePassword2">
                                     <i class="bi bi-eye"></i>
                                 </button>
@@ -306,10 +300,10 @@
                         <input type="hidden" id="facAuto" data-auto="{{ $fac_auto }}">
                         <input type="hidden" id="attribute1Auto" data-auto="{{ $attribute1_auto }}">
                         <input type="hidden" id="groupAuto" data-auto="{{ $group_auto }}">
-                    </div>                            
-                </form>
-            </div>
-        </div>   
+                    </div>       
+                </div>
+            </div>                     
+        </form>   
     @endsection    
 
     <script>

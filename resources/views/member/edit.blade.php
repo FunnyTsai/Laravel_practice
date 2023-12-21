@@ -14,6 +14,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="{{ asset('css/checkout.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/member.css') }}">
+    
+    <!-- 加入這個才可以從js傳value到controller -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- 引入 jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
@@ -23,6 +28,8 @@
     <!-- 引入 autocomplete相關 -->
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/smoothness/jquery-ui.css">
     <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     
@@ -41,31 +48,29 @@
        
         @include('components.breadcrumb_member', ['title' => '編輯'])
 
-        <div class="row">
-            <div class="col-md-5 col-lg-4 order-md-last">
-                <h4 class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-primary">加入的群組</span>
-                    <span class="badge bg-primary rounded-pill" id="groupCountBadge">{{ count($data['group_info']) }}</span>
-                </h4>
+        <form class="needs-validation" action="{{route('member.update', $member)}}" novalidate method="post" required>
+            @csrf
+            @method('patch')
+            <div class="row">
+                <div class="col-md-5 col-lg-4 order-md-last">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3">
+                        <span class="text-primary">加入的群組</span>
+                        <span class="badge bg-primary rounded-pill" id="groupCountBadge">{{ count($data['group_info']) }}</span>
+                    </h4>
 
-                <form class="card p-2" id="addGroupForm">
                     <div class="input-group">
                         <input id="group" type="text" class="form-control" placeholder="請輸入群組名稱(點選建議選項)">
-                        <button type="submit" class="btn btn-primary">新增</button>
+                        <button id="groupSubmit" class="btn btn-primary">新增</button>
                     </div>
-                </form>
 
-                <div class="mt-lg-3">
-                    <ul class="list-group mb-3" id="groupList">
-                        {{-- 系統自動產生 --}}
-                    </ul>
+                    <div class="mt-lg-3">
+                        <ul class="list-group mb-3" id="groupList">
+                            {{-- 系統自動產生 --}}
+                        </ul>
+                    </div>
                 </div>
-            </div>
-                    
-            <div class="col-md-7 col-lg-7">
-                <form class="needs-validation" action="{{route('member.update', $member)}}" novalidate method="post" required>
-                    @csrf
-                    @method('patch')
+                        
+                <div class="col-md-7 col-lg-7">
                     <hr class="my-4">
 
                     <div class="row g-3">
@@ -352,7 +357,7 @@
 
                     <div class="text-end">
                         {{-- <button class="btn btn-primary btn-lg" type="submit">Continue to checkout</button> --}}
-                        <button class="btn btn-success" type="submit">確定存檔</button>
+                        <button id="saveButton" class="btn btn-success" type="submit">確定存檔</button>
                         <a class="btn btn-light" href="{{ route('member.index') }}">回主畫面</a>
                     </div>
 
@@ -364,9 +369,9 @@
                         <input type="hidden" id="groupAuto" data-auto="{{ $group_auto }}">
                         <input type="hidden" id="groupInfo" data-info="{{ $data['group_info'] }}">
                     </div> 
-                </form>
+                </div>
             </div>
-        </div>
+        </form>
         
         <script src="{{ asset('js/checkout.js') }}"></script>
     @endsection

@@ -6,6 +6,8 @@ use App\Models\Member;
 use App\Models\Test;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
 
 class MembersController extends Controller
 {
@@ -62,6 +64,17 @@ class MembersController extends Controller
         $trf_fee = $request->input('trf_fee');
         $user_password1 = $request->input('user_password1');
         $user_password2 = $request->input('user_password2');
+        $selected_groups = $request->input('selected_groups');
+
+        // 防呆：user_id不得與資料庫重複        
+        $checkCount = Member::where('USER_ID',$user_id)->count();
+
+        if ($checkCount > 0) {
+            return redirect()->back()->withInput()->with('error', '新增失敗！此帳號已存在！');
+        }
+
+
+        $this->saveGroupData($user_id, $selected_groups);
 
         date_default_timezone_set('Asia/Taipei');
         $creation_date = date('Y/m/d H:i:s');
@@ -104,10 +117,6 @@ class MembersController extends Controller
         ]);
 
         // 新增群組
-        // 取得群組存入資料庫的代號
-        // select PHR_TYPE
-        // from phrase_TEST
-        // where PHR_NAME ='差勤簽核系統(加班-業代)'
 
         
         return redirect()->route('member.index')->with('notice', '會員資料已成功新增！');
@@ -280,6 +289,11 @@ class MembersController extends Controller
         $trf_fee = $request->input('trf_fee');
         $user_password1 = $request->input('user_password1');
         $user_password2 = $request->input('user_password2');
+        $selected_groups = $request->input('selected_groups');
+
+        $this->saveGroupData($USER_ID, $selected_groups);
+
+        // dd($selected_groups);
 
         date_default_timezone_set('Asia/Taipei');
         $last_update_date = date('Y/m/d H:i:s');
@@ -300,30 +314,34 @@ class MembersController extends Controller
             $user_boss = (explode(' ', $user_boss))[0];
         } 
 
-        // insert進資料表
-        Member::where('user_id', $USER_ID)
-                ->update([
-                    'user_name' => $user_name,
-                    'user_group' => $user_group,
-                    'user_zone' => $user_zone,
-                    'user_boss' => $user_boss,
-                    'user_role' => $user_role,
-                    'team' => $team,
-                    'attribute1' => $attribute1,
-                    'user_mail' => $user_mail,
-                    'orig_vendor' => $orig_vendor,
-                    'mail' => $mail,
-                    'salesrep_id' => $salesrep_id,
-                    'collector_id' => $collector_id,
-                    'ord_amt' => $ord_amt,
-                    'ord_dis_amt' => $ord_dis_amt,
-                    'user_schedule' => $user_schedule,
-                    'org_id' => $org_id,
-                    'meal_fee' => $meal_fee,
-                    'trf_fee' => $trf_fee,
-                    'user_password' => md5($user_password1),
-                    'LAST_UPDATE_DATE' => $last_update_date
-                ]);
+        $updateData = [
+            'user_name' => $user_name,
+            'user_group' => $user_group,
+            'user_zone' => $user_zone,
+            'user_boss' => $user_boss,
+            'user_role' => $user_role,
+            'team' => $team,
+            'attribute1' => $attribute1,
+            'user_mail' => $user_mail,
+            'orig_vendor' => $orig_vendor,
+            'mail' => $mail,
+            'salesrep_id' => $salesrep_id,
+            'collector_id' => $collector_id,
+            'ord_amt' => $ord_amt,
+            'ord_dis_amt' => $ord_dis_amt,
+            'user_schedule' => $user_schedule,
+            'org_id' => $org_id,
+            'meal_fee' => $meal_fee,
+            'trf_fee' => $trf_fee,
+            'LAST_UPDATE_DATE' => $last_update_date
+        ];
+
+        if (!empty($user_password1) && !empty($user_password2)) {
+            // 如果 $user_password1 和 $user_password2 都不為空，則更新 user_password 欄位
+            $updateData['user_password'] = md5($user_password1);
+        }
+
+        Member::where('user_id', $USER_ID)->update($updateData);
 
         return redirect()->back()->with('notice', '會員資料已成功編輯！');     
     }
@@ -379,6 +397,34 @@ class MembersController extends Controller
         } 
         else {
             return redirect()->route('member.index')->with('error', '刪除失敗！');
+        }
+    }
+
+    public function saveGroupData($user_id, $selected_groups)
+    {
+        if (Auth::check()) {
+    
+            // 先刪除使用者目前有的所有群組
+            DB::table('groups_TEST')->where('GRP_USERS', $user_id)->delete();
+    
+            if (!empty($selected_groups)) {
+                foreach ($selected_groups as $content) {
+    
+                    // 取得群組存入資料庫的代號
+                    $PHR_TYPE = DB::table('phrase_TEST')
+                                    ->where('PHR_NAME', $content)
+                                    ->value('PHR_TYPE');
+    
+                    DB::table('groups_TEST')
+                        ->insert([
+                            'GRP_USERS' => $user_id,
+                            'GRP_CODE' => $PHR_TYPE,
+                        ]);
+                }
+            }
+        } 
+        else {
+            dd($user_id);
         }
     }
 }

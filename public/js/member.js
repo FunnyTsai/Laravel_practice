@@ -35,17 +35,17 @@ $(function() {
     });
 
     // 按下新增按鈕時新增群組<li>
-    $('#addGroupForm').submit(function(event) {
-        event.preventDefault();
-
+    $(document).on('click', '#groupSubmit', function(event) {
+        event.preventDefault(event);
         var groupName = $('#group').val();
 
-        if (groupName.trim() !== '') {
+        // 先檢查這個 groupName 是否有存在於目前的 name="selected_groups[]" 元素的 value 中
+        var exists = $("input[name='selected_groups[]'][value='" + groupName + "']").length > 0;
 
+        if (groupName.trim() !== '' && !exists) {
             var newItem = '<li class="list-group-item d-flex justify-content-between lh-sm">' +
-                            '<div>' +
-                            '<h6 class="my-0">' + groupName + '</h6>' +
-                            '</div>' +
+                            '<input type="hidden" name="selected_groups[]" value="' + groupName + '">' +
+                            '<input class="my-0" placeholder="' + groupName + '" value="' + groupName + '" readonly>' +
                             '<button type="button" class="btn btn-danger btn-sm deleteBtn">刪除</button>' +
                             '</li>';
 
@@ -53,6 +53,10 @@ $(function() {
 
             $('#group').val('');
         }
+        else{
+            alert("請勿輸入重複的群組或空群組！");
+        }
+
         updateGroupCount();
     });
 
