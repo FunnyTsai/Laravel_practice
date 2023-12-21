@@ -48,7 +48,10 @@ Route::resource('member', MembersController::class)->except([
     'destroy'
 ])->middleware('auth')->name('*','member');
 
-Route::resource('vote', VoteController::class)->middleware('auth')->name('*','vote');
+
+Route::resource('vote', VoteController::class)->except([
+    'destroy'
+])->middleware('auth')->name('*','vote');
 
 
 /*
@@ -59,6 +62,7 @@ Route::resource('vote', VoteController::class)->middleware('auth')->name('*','vo
 */
 // Route::get('/', [MembersController::class, 'index'])->name('member');
 Route::delete('/member/bulkDestroy', [MembersController::class, 'bulkDestroy'])->name('member.bulkDestroy');
+Route::delete('/vote/bulkDestroy', [VoteController::class, 'bulkDestroy'])->name('vote.bulkDestroy');
 
 
 Route::get('/home', function () {
