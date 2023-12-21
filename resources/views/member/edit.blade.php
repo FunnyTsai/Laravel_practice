@@ -33,12 +33,12 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     
-    <script src="{{ asset('js/member.js') }}"></script>
-    <script src="{{ asset('js/member_edit.js') }}"></script>
+    <script src="{{ asset('js/member/member.js') }}"></script>
+    <script src="{{ asset('js/member/edit.js') }}"></script>
     <script src="{{ asset('js/autocomplete.js') }}"></script>
 </head>
 <body>
-    @extends('layouts.member')
+    @extends('layouts.page')
 
     @section('sidebar')
         @include('layouts.sidebar')
@@ -46,7 +46,8 @@
 
     @section('main')
        
-        @include('components.breadcrumb_member', ['title' => '編輯'])
+
+        @include('components.breadcrumb', ['page' => 'member', 'pageName' => '帳號', 'title' => '編輯'])
 
         <form class="needs-validation" action="{{route('member.update', $member)}}" novalidate method="post" required>
             @csrf

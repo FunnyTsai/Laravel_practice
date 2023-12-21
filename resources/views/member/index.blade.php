@@ -34,7 +34,7 @@
     <link rel="stylesheet" href="{{ asset('bootstrap-table/bootstrap-table.min.css') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-table/bootstrap-table-filter-control.css') }}">
-    <script src="{{ asset('js/member_delete.js') }}" crossorigin="anonymous"></script>
+    <script src="{{ asset('js/member/delete.js') }}" crossorigin="anonymous"></script>
 
     <style>
         #table th {
@@ -47,10 +47,10 @@
     </style>
 </head>
 <body>
-    @extends('layouts.member')
+    @extends('layouts.page')
 
     @section('sidebar')
-        @include('layouts.sidebar', ['login_user' => 'TEST'])
+        @include('layouts.sidebar')
     @endsection
 
     @section('main')
