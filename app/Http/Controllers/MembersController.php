@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
-use App\Models\Test;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -22,14 +21,14 @@ class MembersController extends Controller
     {
         // $userData = Member::where('ORG_ID', '84')->get();
 
-        $userData = Member::select('UT1.*', 'UT2.USER_NAME AS BOSS_NAME')
+        $data = Member::select('UT1.*', 'UT2.USER_NAME AS BOSS_NAME')
                     ->from('USERS_TEST AS UT1')
                     ->leftjoin('USERS_TEST AS UT2', 'UT1.USER_BOSS', '=', 'UT2.USER_ID')
                     ->where('UT1.ORG_ID', '84')
                     // ->where('UT1.USER_ID', 'W34000')
                     ->get();
 
-        return view('member.index', ['userData' => $userData]);
+        return view('member.index', ['userData' => $data]);
     }
 
     // 會接收前端post過來的參數
