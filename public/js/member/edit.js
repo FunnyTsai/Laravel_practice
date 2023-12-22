@@ -1,11 +1,11 @@
-function showGroup(){  
+function show(){  
     // 編輯頁面自動代入目前有的群組    
-    var groupInfo = JSON.parse(document.getElementById('groupInfo').getAttribute('data-info'));
+    var info = JSON.parse(document.getElementById('groupInfo').getAttribute('data-info'));
 
     // 獲取要顯示群組的 ul 元素
-    var groupList = document.getElementById('groupList');
+    var list = document.getElementById('groupList');
 
-    groupInfo.forEach(function(item) {
+    info.forEach(function(item) {
         var groupName = item.PHR_NAME;
     
         var newItem = document.createElement('li');
@@ -15,12 +15,12 @@ function showGroup(){
                                 <button type="button" class="btn btn-danger btn-sm deleteBtn">刪除</button>
                             `;
 
-        groupList.appendChild(newItem);
+        list.appendChild(newItem);
     });
 }
 
 $(function() {
-    showGroup();
+    show();
     
     // var listItems = document.querySelectorAll('#groupList li');
 
