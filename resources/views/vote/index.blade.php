@@ -1,10 +1,10 @@
 
 {{-- 檢查傳送過來的資料 --}}
-@isset($voteData)
-    {{-- @foreach ($userData as $user)
-        {{ dd($user->USER_ID) }}；
-    @endforeach --}}
-@endisset 
+{{-- @isset($voteData)
+    @foreach ($voteData as $vote)
+        {{ dd($vote->VOTE_ID) }}；
+    @endforeach
+@endisset  --}}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,7 +47,7 @@
     </style>
 </head>
 <body>
-    @extends('layouts.page')
+    @extends('layouts.page', ['webTitle' => '投票資料'])
 
     @section('sidebar')
         @include('layouts.sidebar')
@@ -85,7 +85,7 @@
                         <td>
                             <input type="checkbox" name="btSelectItem" value="{{ $vote->VOTE_ID }}">
                         </td>
-                        <td><a href="">{{ $vote->VOTE_DATE }}</a></td>    
+                        <td><a href="{{ route('vote.edit', $vote->VOTE_ID) }}">{{ $vote->VOTE_DATE }}</a></td> 
                         {{-- <td><a href="{{ route('vote.edit', $vote->VOTE_DATE) }}">{{ $vote->VOTE_DATE }}</a></td>     --}}
                         <td>{{ $vote->TITLE }}</td>
                         <td>{{ $vote->TITLE_DESC }}</td>

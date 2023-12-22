@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Vote;
+use App\Models\Member;
+use Illuminate\Support\Facades\DB;
 
 class VoteController extends Controller
 {
@@ -175,67 +177,63 @@ class VoteController extends Controller
     //     return view("member.create", $data);
     // }
 
-    // public function edit($USER_ID){  
-    //     $data = $this->getUserData($USER_ID);
-    //     $member = member::find($USER_ID);     
+    public function edit($VOTE_ID){  
 
-    //     if ($member->COLLECTOR_ID) {            
-    //         $collector_name = DB::table('A_AR_COLLECTOR_TEST')
-    //                             ->select('NAME')
-    //                             ->where('COLLECTOR_ID', $member->COLLECTOR_ID)
-    //                             ->first(); 
-
-    //         $data['collector_name'] = $collector_name;
-    //     } 
-
-    //     if ($member->ATTRIBUTE1) {            
-    //         $attribute1_name = member::select('USER_NAME')
-    //                             ->where('USER_ID', $member->ATTRIBUTE1)
-    //                             ->first(); 
-
-    //         $data['attribute1_name'] = $attribute1_name;
-    //     }
-
-    //     if ($member->USER_BOSS) {            
-    //         $boss_name = member::select('USER_NAME')
-    //                             ->where('USER_ID', $member->USER_BOSS)
-    //                             ->first(); 
-
-    //         $data['boss_name'] = $boss_name;
-    //     }
-
-    //     // 群組資料           
-    //     $group = DB::table('groups_TEST as g')
-    //                 ->leftjoin('phrase_TEST as p', function ($join) {
-    //                     $join->on('g.grp_code', '=', 'p.phr_type')
-    //                         ->where('p.PHR_KIND', '01')
-    //                         ->where('p.MODIFY_FLAG', '<>', 'D');
-    //                 })
-    //                 ->select('PHR_NAME')
-    //                 ->where('g.grp_users', $member->USER_ID)
-    //                 ->get();
-
-    //     $data['group_info'] = $group;             
-    //     $data['member'] = $member;
+        $vote = vote::find($VOTE_ID);           
         
-    //     $boss_auto = $this->boss();
-    //     $team_auto = $this->team();
-    //     $fac_auto = $this->fac();
-    //     $attribute1_auto = $this->attribute1();
-    //     $group_auto = $this->group();
+        $CREATE_BY = member::select('USER_NAME')
+                            ->where('USER_ID', $vote->CREATE_BY)
+                            ->first();
 
-    //     return view("member.edit", [
-    //                     'data' => $data, 
-    //                     'member' => $member, 
-    //                     'boss_auto' => $boss_auto, 
-    //                     'team_auto' => $team_auto, 
-    //                     'fac_auto' => $fac_auto, 
-    //                     'attribute1_auto' => $attribute1_auto, 
-    //                     'group_auto' => $group_auto
-    //                 ]);
-    // }
+        // 投票部門        
+        $USE_GROUP_array = explode(',',($vote->USE_GROUP));
 
-    // public function update(Request $request, $USER_ID){  
+        $USE_GROUP = [];
+
+        foreach ($USE_GROUP_array as $group) {
+                
+            $groupName = DB::table('DEPT_BASE_TEST')
+                        ->select("DEPT_NAME")
+                        ->where('STATUS_FLAG', '!=', 'D')
+                        ->where('DEPT_CODE', $group)
+                        ->first();
+            array_push($USE_GROUP, $groupName->DEPT_NAME);
+        }
+
+        $USE_GROUP_FINAL = implode(', ', $USE_GROUP);
+        
+        // 已投票人員        
+        $VOTER_array = explode(',',($vote->VOTE_USER));
+
+        $VOTER = [];
+
+        foreach ($VOTER_array as $voter) {
+                
+            $voterName = DB::table('EMP_BASE_TEST')
+                        ->select("EMP_NAME")
+                        ->where('EMP_CODE', $voter)
+                        ->first();
+
+            array_push($VOTER, $voterName->EMP_NAME);
+        }
+
+        $VOTER_FINAL = implode(', ', $VOTER);
+        
+        // 投票明細           
+        $vote_info = DB::table('A_VOTE_L_TEST')
+                    ->where('VOTE_ID', $VOTE_ID)
+                    ->get();
+
+        return view("vote.edit",[
+            'vote' => $vote,
+            'CREATE_BY' => $CREATE_BY,
+            'USE_GROUP_FINAL' => $USE_GROUP_FINAL,
+            'VOTER_FINAL' => $VOTER_FINAL,
+            'VOTE_INFO' => $vote_info,
+        ]);
+    }
+
+    public function update(Request $request, $VOTE_ID){  
         
     //     $user_name = $request->input('user_name');
     //     $user_group = $request->input('user_group');
@@ -311,8 +309,8 @@ class VoteController extends Controller
 
     //     Member::where('user_id', $USER_ID)->update($updateData);
 
-    //     return redirect()->back()->with('notice', '會員資料已成功編輯！');     
-    // }
+        return redirect()->back()->with('notice', '會員資料已成功編輯！');     
+    }
 
     // function getUserData(){
     //     // auth()->user()->members->find($USER_ID); 
