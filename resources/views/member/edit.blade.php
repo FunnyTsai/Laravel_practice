@@ -38,7 +38,7 @@
     <script src="{{ asset('js/autocomplete.js') }}"></script>
 </head>
 <body>
-    @extends('layouts.page')
+    @extends('layouts.page', ['webTitle' => '帳號資料'])
 
     @section('sidebar')
         @include('layouts.sidebar')

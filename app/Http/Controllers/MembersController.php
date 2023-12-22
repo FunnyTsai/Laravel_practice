@@ -183,7 +183,7 @@ class MembersController extends Controller
     }
 
     public function create(){
-        $data = $this->getUserData();
+        $data = $this->getData();
         
         $boss_auto = $this->boss();
         $team_auto = $this->team();
@@ -202,12 +202,12 @@ class MembersController extends Controller
     }
 
     public function list($USER_ID){
-        $data = $this->getUserData($USER_ID);
+        $data = $this->getData($USER_ID);
         return view("member.create", $data);
     }
 
     public function edit($USER_ID){  
-        $data = $this->getUserData($USER_ID);
+        $data = $this->getData($USER_ID);
         $member = member::find($USER_ID);     
 
         if ($member->COLLECTOR_ID) {            
@@ -345,7 +345,7 @@ class MembersController extends Controller
         return redirect()->back()->with('notice', '會員資料已成功編輯！');     
     }
 
-    function getUserData(){
+    function getData(){
         // auth()->user()->members->find($USER_ID); 
         $group = DB::table('VALUE_SET_LEBBY')
                     ->select('VLS_CODE')
