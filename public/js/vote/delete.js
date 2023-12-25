@@ -1,7 +1,7 @@
 function getSelectedRowsIds() {
     var selectedRows = $('#table').bootstrapTable('getSelections');
     var selectedIds = $.map(selectedRows, function (row) {
-        return $(row.VOTE_ID); 
+        return row.VOTE_ID;
     });
     return selectedIds;
 }

@@ -11,108 +11,52 @@ class VoteController extends Controller
 {
     public function index()
     {
-
-        $data = Vote::get();
+        $data = Vote::orderBy('VOTE_DATE','desc')->get();
 
         return view('vote.index', ['voteData' => $data]);
     }
     
-    // // 會接收前端post過來的參數
-    // public function store(Request $request){
+    // 會接收前端post過來的參數
+    public function store(Request $request){
 
-    //     // dd($request->all()); 
+        $VOTE_DATE = $request->input('VOTE_DATE');
+        // $CREATE_BY = $request->input('CREATE_BY');
+        $CREATE_BY = '1120904';
+        $START_DATE = $request->input('START_DATE');
+        $END_DATE = $request->input('END_DATE');
+        $USE_GROUP = $request->input('USE_GROUP');
+        $TITLE = $request->input('TITLE');
+        $TITLE_DESC = $request->input('TITLE_DESC');
 
-    //     // 要與<input>參數name的變數名稱對應
-    //     // $content = $request -> validate([
-    //     //     'user_id' => 'required|min:7|max:7',
-    //     //     'user_password1' => 'required'
-    //     // ]);
-
-    //     $user_id = $request->input('user_id');
-    //     $user_name = $request->input('user_name');
-    //     $user_group = $request->input('user_group');
-    //     $user_zone = $request->input('user_zone');
-    //     $user_boss = $request->input('user_boss');
-    //     $user_role = $request->input('user_role');
-    //     $team = $request->input('team');
-    //     $attribute1 = $request->input('attribute1');
-    //     $user_mail = $request->input('user_mail');
-    //     $orig_vendor = $request->input('orig_vendor');
-    //     $mail = $request->input('mail');
-    //     $salesrep_id = $request->input('salesrep_id');
-    //     $collector_id = $request->input('collector_id');
-    //     $ord_amt = $request->input('ord_amt');
-    //     $ord_dis_amt = $request->input('ord_dis_amt');
-    //     $user_schedule = $request->input('user_schedule');
-    //     $org_id = $request->input('org_id');
-    //     $meal_fee = $request->input('meal_fee');
-    //     $trf_fee = $request->input('trf_fee');
-    //     $user_password1 = $request->input('user_password1');
-    //     $user_password2 = $request->input('user_password2');
-    //     $selected_groups = $request->input('selected_groups');
-
-    //     // 防呆：user_id不得與資料庫重複        
-    //     $checkCount = Member::where('USER_ID',$user_id)->count();
-
-    //     if ($checkCount > 0) {
-    //         return redirect()->back()->withInput()->with('error', '新增失敗！此帳號已存在！');
-    //     }
-
-
-    //     $this->saveGroupData($user_id, $selected_groups);
-
-    //     date_default_timezone_set('Asia/Taipei');
-    //     $creation_date = date('Y/m/d H:i:s');
-
-    //     if ($user_password1 != $user_password2) {
-    //         return redirect()->back()->with('error', '密碼輸入不一致');
-    //     }
-
-    //     if ($attribute1 != '') {
-    //         $attribute1 = (explode(' ', $attribute1))[0];
-    //     } 
-
-    //     if ($orig_vendor != '') {
-    //         $orig_vendor = (explode(' ', $orig_vendor))[0];
-    //     } 
-
-    //     // insert進資料表
-    //     Member::insert([
-    //         'user_id' => $user_id,
-    //         'user_name' => $user_name,
-    //         'user_group' => $user_group,
-    //         'user_zone' => $user_zone,
-    //         'user_boss' => $user_boss,
-    //         'user_role' => $user_role,
-    //         'team' => $team,
-    //         'attribute1' => $attribute1,
-    //         'user_mail' => $user_mail,
-    //         'orig_vendor' => $orig_vendor,
-    //         'mail' => $mail,
-    //         'salesrep_id' => $salesrep_id,
-    //         'collector_id' => $collector_id,
-    //         'ord_amt' => $ord_amt,
-    //         'ord_dis_amt' => $ord_dis_amt,
-    //         'user_schedule' => $user_schedule,
-    //         'org_id' => $org_id,
-    //         'meal_fee' => $meal_fee,
-    //         'trf_fee' => $trf_fee,
-    //         'user_password' => md5($user_password1),
-    //         'creation_date' => $creation_date
-    //     ]);
-
-    //     // 新增群組
-
+        date_default_timezone_set('Asia/Taipei');
+        $CREATE_DATE = date('Y/m/d H:i:s');
         
-    //     return redirect()->route('member.index')->with('notice', '會員資料已成功新增！');
-        
-    //     // print_r($content);
-    //     // echo '<h1>' . $user_password1  . '</h1>';
+        $VOTE_DATE = str_replace('-', '/', $VOTE_DATE);
+        $START_DATE = str_replace('-', '/', $START_DATE);
+        $END_DATE = str_replace('-', '/', $END_DATE);
 
-    //     // 呼叫Member Model寫進資料庫 
-    //     // members()->create($content);
-    //     // 跳轉到首頁
-    // }
+        // $lastId = Vote::max('VOTE_ID') + 1;
+
+        // insert進資料表
+        Vote::insert([
+            // 'VOTE_ID' => $lastId,
+            'VOTE_DATE' => $VOTE_DATE,
+            'TITLE' => $TITLE,
+            'TITLE_DESC' => $TITLE_DESC,
+            'USE_GROUP' => $USE_GROUP,
+            'START_DATE' => $START_DATE,
+            'END_DATE' => $END_DATE,
+            'MODIFY_FLAG' => 'A',
+            'CREATE_BY' => $CREATE_BY,
+            'CREATE_DATE' => $CREATE_DATE,
+            'LAST_UPDATE_BY' => $CREATE_BY,
+            'LAST_UPDATE_DATE' => $CREATE_DATE,
+            'ACHIEVE_QTY' => '0',
+            'VOTE_USER' => '0'
+        ]);
+
+        return redirect()->route('vote.index')->with('notice', '投票資料已成功新增！');
+    }
 
     // // boss建議選項
     // public function boss(){        
@@ -172,11 +116,6 @@ class VoteController extends Controller
         return view("vote.create");
     }
 
-    // public function list($USER_ID){
-    //     $data = $this->getUserData($USER_ID);
-    //     return view("member.create", $data);
-    // }
-
     public function edit($VOTE_ID){  
 
         $vote = vote::find($VOTE_ID);           
@@ -197,7 +136,10 @@ class VoteController extends Controller
                         ->where('STATUS_FLAG', '!=', 'D')
                         ->where('DEPT_CODE', $group)
                         ->first();
-            array_push($USE_GROUP, $groupName->DEPT_NAME);
+
+            if ($groupName) {
+                array_push($USE_GROUP, $groupName->DEPT_NAME);
+            }
         }
 
         $USE_GROUP_FINAL = implode(', ', $USE_GROUP);
@@ -214,7 +156,9 @@ class VoteController extends Controller
                         ->where('EMP_CODE', $voter)
                         ->first();
 
-            array_push($VOTER, $voterName->EMP_NAME);
+            if ($voterName) {
+                array_push($VOTER, $voterName->EMP_NAME);
+            }
         }
 
         $VOTER_FINAL = implode(', ', $VOTER);
@@ -356,7 +300,7 @@ class VoteController extends Controller
         $ids = explode(',', $request->input('deleteIds'));
 
         // 刪除所選中的項目 
-        $deletedCount = Member::whereIn('USER_ID', $ids)->delete();
+        $deletedCount = Vote::whereIn('VOTE_ID', $ids)->delete();
 
         if ($deletedCount > 0) {
             return redirect()->route('vote.index')->with('notice', '選取項目已成功刪除！');
