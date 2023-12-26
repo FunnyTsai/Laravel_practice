@@ -110,8 +110,8 @@
 
                 <div class="row g-4 mb-4">
                     <div class="col-sm-12">
-                        <label for="VOTED_USER" class="form-label">已投票人員</label>
-                        <textarea class="form-control" name="TITLE_DESC" rows="6" cols="50" required>{{ $VOTER_FINAL }}</textarea>
+                        <label for="VOTE_USER" class="form-label">已投票人員</label>
+                        <textarea class="form-control" name="VOTE_USER" rows="6" cols="50" required>{{ $VOTER_FINAL }}</textarea>
                     </div>
                 </div>
     

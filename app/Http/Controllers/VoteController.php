@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Vote;
 use App\Models\Member;
+use App\Models\AVoteResult;
 use Illuminate\Support\Facades\DB;
 
 class VoteController extends Controller
@@ -15,7 +16,52 @@ class VoteController extends Controller
 
         return view('vote.index', ['voteData' => $data]);
     }
-    
+        
+    public function voteResult_index(Request $request)
+    {
+        $voteTitle_auto = $this->voteTitle();
+        $voteTitle = $request->input('voteTitle');
+
+        $voteId = ($voteTitle == null) ? vote::max('VOTE_ID') : $voteTitle;
+
+        $data = DB::table('A_VOTE_RESULT_TEST as R')
+            ->select(
+                'R.VOTE_RESULT_ID',
+                'D.DEPT_NAME AS VOTE_DEPT_NAME',
+                'E.EMP_NAME AS VOTE_EMP_NAME',
+                'H.TITLE',
+                'R.VOTE_USER',
+                'R.VOTE_DEPT_CODE',
+                'L.VOTE_TITLE'
+            )
+            ->leftJoin('A_VOTE_L_TEST as L', function ($join) {
+                $join->on('R.VOTE_ID', '=', 'L.VOTE_ID')
+                    ->on('R.VOTE_LINE_NO', '=', 'L.LINE_NO');
+            })
+            ->leftJoin('DEPT_BASE_TEST as D', function ($join) {
+                $join->on('R.VOTE_DEPT_CODE', '=', 'D.DEPT_CODE')
+                    ->where('D.STATUS_FLAG', '!=', 'D');
+            })
+            ->leftJoin('EMP_BASE_TEST as E', 'R.VOTE_USER', '=', 'E.EMP_CODE')
+            ->leftJoin('A_VOTE_H_TEST as H', 'R.VOTE_ID', '=', 'H.VOTE_ID')
+            ->where('L.VOTE_ID', $voteId)
+            ->get();
+
+        return view('vote.result.index', [
+            'voteData' => $data,
+            'voteTitle_auto' => $voteTitle_auto
+        ]);
+    }
+
+
+    // voteTitle建議選項
+    public function voteTitle(){        
+        $data = Vote::select(DB::raw("CONCAT(VOTE_ID, ' - ', TITLE) as TITLE"), 'VOTE_ID')
+                    ->get();
+
+        return $data;
+    }
+
     // 會接收前端post過來的參數
     public function store(Request $request){
 

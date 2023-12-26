@@ -64,19 +64,18 @@
             data-page-size="10"
             data-show-search-clear-button="true"
             data-locale="zh-TW"
-            data-sort-name="VOTE_DATE"
-            data-sort-order="desc"
             >
             <thead>
                 <tr>
                     <th data-field="0" data-checkbox="true"></th>  
+                    <th data-field="VOTE_ID">ID</th>  
                     <th data-field="VOTE_DATE" data-filter-control="input" data-sortable="true">建立日期</th>
                     {{-- <th data-field="USER_NAME" data-filter-control="input" data-sortable="true">部門</th> --}}
-                    <th data-field="TITLE" data-filter-control="select">標題</th>
-                    <th data-field="TITLE_DESC" data-filter-control="select">描述</th>
-                    <th data-field="START_DATE" data-filter-control="input" data-sortable="true">開始日期</th>
-                    <th data-field="END_DATE" data-filter-control="select" data-sortable="true">結束日期</th>
-                    <th data-field="ACHIEVE_QTY" data-filter-control="input" data-sortable="true">投票數</th>
+                    <th data-field="TITLE" data-filter-control="input">標題</th>
+                    <th data-field="TITLE_DESC" data-filter-control="input">描述</th>
+                    <th data-field="START_DATE" data-sortable="true">開始日期</th>
+                    <th data-field="END_DATE" data-sortable="true">結束日期</th>
+                    <th data-field="ACHIEVE_QTY" data-sortable="true">投票數</th>
                 </tr>
             </thead>
             <tbody>
@@ -85,6 +84,7 @@
                         <td>
                             <input type="checkbox" name="btSelectItem" value="{{ $vote->VOTE_ID }}">
                         </td>
+                        <td>{{ $vote->VOTE_ID }}</td>
                         <td><a href="{{ route('vote.edit', $vote->VOTE_ID) }}">{{ $vote->VOTE_DATE }}</a></td> 
                         {{-- <td><a href="{{ route('vote.edit', $vote->VOTE_DATE) }}">{{ $vote->VOTE_DATE }}</a></td>     --}}
                         <td>{{ $vote->TITLE }}</td>
@@ -110,7 +110,10 @@
         <script>           
             $(function () {
                 $('#table').bootstrapTable({
+                    
                 });
+                
+                $('#table').bootstrapTable('hideColumn', 'VOTE_ID');
             });
         </script>
     @endsection

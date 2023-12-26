@@ -48,6 +48,8 @@ Route::resource('member', MembersController::class)->except([
     'destroy'
 ])->middleware('auth')->name('*','member');
 
+Route::get('/voteResult', [VoteController::class, 'voteResult_index'])->name('voteResult.index');
+
 
 Route::resource('vote', VoteController::class)->except([
     'destroy'
