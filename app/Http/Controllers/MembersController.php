@@ -24,7 +24,7 @@ class MembersController extends Controller
         $data = Member::select('UT1.*', 'UT2.USER_NAME AS BOSS_NAME')
                     ->from('USERS_TEST AS UT1')
                     ->leftjoin('USERS_TEST AS UT2', 'UT1.USER_BOSS', '=', 'UT2.USER_ID')
-                    ->where('UT1.ORG_ID', '84')
+                    // ->where('UT1.ORG_ID', '<>', '0')
                     // ->where('UT1.USER_ID', 'W34000')
                     ->get();
 
