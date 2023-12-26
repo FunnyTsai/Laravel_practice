@@ -35,7 +35,7 @@
     
     <script src="{{ asset('js/member/member.js') }}"></script>
     <script src="{{ asset('js/member/edit.js') }}"></script>
-    <script src="{{ asset('js/autocomplete.js') }}"></script>
+    <script src="{{ asset('js/member/autocomplete.js') }}"></script>
 </head>
 <body>
     @extends('layouts.page', ['webTitle' => '帳號資料'])

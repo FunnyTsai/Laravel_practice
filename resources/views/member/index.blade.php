@@ -80,6 +80,7 @@
                     <th data-field="TEAM" data-filter-control="input" data-sortable="true">組別</th>
                     <th data-field="USER_ROLE" data-filter-control="select" data-sortable="true">角色</th>
                     <th data-field="USER_BOSS" data-filter-control="input" data-sortable="true">主管</th>
+                    <th data-field="ORG_ID" data-filter-control="select">帳號狀態</th>
                 </tr>
             </thead>
             <tbody>
@@ -138,6 +139,15 @@
                             @endswitch
                         </td>
                         <td>{{ $user->BOSS_NAME }}</td>
+                        <td>
+                            @switch($user->ORG_ID)
+                            @case('0')
+                                失效
+                                @break
+                            @default
+                                有效
+                            @endswitch
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -157,6 +167,13 @@
             $(function () {
                 $('#table').bootstrapTable({
                 });
+
+                setTimeout(function() {
+                    var orgSelect = $('.bootstrap-table-filter-control-ORG_ID');
+                    
+                    orgSelect.val('有效');
+                    orgSelect.trigger('change');
+                }, 500);
             });
         </script>
     @endsection
