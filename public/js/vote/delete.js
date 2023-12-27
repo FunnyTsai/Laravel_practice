@@ -11,6 +11,9 @@ $(document).ready(function () {
         e.preventDefault();
         var selectedIds = getSelectedRowsIds();
         $('#deleteIds').val(selectedIds);
-        this.submit();
+
+        if(confirm("確定要刪除這些資料嗎？")){
+            this.submit();
+        }
     });
 });

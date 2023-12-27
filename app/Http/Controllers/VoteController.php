@@ -6,7 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\Vote;
 use App\Models\Member;
 use App\Models\AVoteResult;
+use App\Models\AVoteL;
+use App\Models\DeptBase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class VoteController extends Controller
 {
@@ -53,7 +56,6 @@ class VoteController extends Controller
         ]);
     }
 
-
     // voteTitle建議選項
     public function voteTitle(){        
         $data = Vote::select(DB::raw("CONCAT(VOTE_ID, ' - ', TITLE) as TITLE"), 'VOTE_ID')
@@ -62,17 +64,16 @@ class VoteController extends Controller
         return $data;
     }
 
-    // 會接收前端post過來的參數
     public function store(Request $request){
 
         $VOTE_DATE = $request->input('VOTE_DATE');
-        // $CREATE_BY = $request->input('CREATE_BY');
-        $CREATE_BY = '1120904';
+        $CREATE_BY = Auth::user()->USER_ID;
         $START_DATE = $request->input('START_DATE');
         $END_DATE = $request->input('END_DATE');
-        $USE_GROUP = $request->input('USE_GROUP');
+        $USE_GROUP = $request->input('deptcodesCodeInput');        
         $TITLE = $request->input('TITLE');
         $TITLE_DESC = $request->input('TITLE_DESC');
+        $VOTE_INFO = $request->input('VOTE_INFO');
 
         date_default_timezone_set('Asia/Taipei');
         $CREATE_DATE = date('Y/m/d H:i:s');
@@ -83,7 +84,7 @@ class VoteController extends Controller
 
         // $lastId = Vote::max('VOTE_ID') + 1;
 
-        // insert進資料表
+        // insert進投票資料表
         Vote::insert([
             // 'VOTE_ID' => $lastId,
             'VOTE_DATE' => $VOTE_DATE,
@@ -101,68 +102,60 @@ class VoteController extends Controller
             'VOTE_USER' => '0'
         ]);
 
+        $this->insertVoteInfo($VOTE_INFO);
+
         return redirect()->route('vote.index')->with('notice', '投票資料已成功新增！');
     }
 
-    // // boss建議選項
-    // public function boss(){        
-    //     $data = DB::table('USERS_TEST')
-    //                 ->select(DB::raw("CONCAT(USER_ID, ' ', USER_NAME) AS BOSS"))
-    //                 // ->select('USER_NAME')
-    //                 ->where('USER_ROLE', 'E')
-    //                 ->get();
+    public function insertVoteInfo($VOTE_INFO){
 
-    //     return $data;
-    // }
+        $vote_line_count = count($VOTE_INFO);
+        
+        $lastId = AVoteL::max('VOTE_LINE_ID') + 1;
+        $VOTE_ID = Vote::max('VOTE_ID');
 
-    // // team建議選項
-    // public function team(){        
-    //     $data = DB::table('USERS_TEST')
-    //                 ->select('TEAM')
-    //                 ->distinct()
-    //                 ->get();
+        date_default_timezone_set('Asia/Taipei');
+        $CREATE_DATE = date('Y/m/d H:i:s');
 
-    //     return $data;
-    // }
+        $USER_ID = Auth::user()->USER_ID;
+        $LINE_NO = 1;
 
-    // // 原廠建議選項
-    // public function fac(){        
-    //     $data = DB::table('FACTORY_TEST')
-    //                 ->select(DB::raw("CONCAT(Fac_Code, ' ', Fac_Name) AS Fac"))
-    //                 ->distinct()
-    //                 ->get();
+        foreach ($VOTE_INFO as $info) {           
 
-    //     return $data;
-    // }
+            AVoteL::insert([
+                'VOTE_LINE_ID' => $lastId,
+                'VOTE_ID' => $VOTE_ID,
+                'LINE_NO' => $LINE_NO,            
+                'VOTE_TITLE' => $info['TITLE'],
+                'VOTE_TITLE_DESC' => $info['TITLE_DESC'],
+                'MODIFY_FLAG' => 'A',
+                'CREATE_BY' => $USER_ID,
+                'CREATE_DATE' => $CREATE_DATE,
+                'LAST_UPDATE_BY' => $USER_ID,
+                'LAST_UPDATE_DATE' => $CREATE_DATE
+            ]);
 
-    // // 差勤員工編號建議選項
-    // public function attribute1(){        
-
-    //     // $data = Member::select('USER_ID','USER_NAME')
-    //     $data = Member::select(DB::raw("CONCAT(USER_ID, ' ', USER_NAME) AS USER_INFO"))
-    //             ->where('ORG_ID', '84')
-    //             ->distinct()
-    //             ->get();
-
-    //     return $data;
-    // }
-
-    // // 群組建議選項
-    // public function group(){        
-    //     $data = DB::table('PHRASE_TEST')
-    //             ->select('PHR_NAME')
-    //             ->where('PHR_KIND', '01')
-    //             ->where('MODIFY_FLAG', '<>', 'D')
-    //             ->get();
-
-    //     return $data;
-    // }
+            $LINE_NO++;  
+        }
+    }
 
     public function create(){
-        return view("vote.create");
+
+        // 傳入新增頁面的部門選項
+        $allDept = DeptBase::select('DEPT_NAME', 'DEPT_CODE')
+                ->distinct()
+                ->get();
+
+        return view("vote.create", [
+                    'allDept' => $allDept
+        ]);
     }
 
     public function edit($VOTE_ID){  
+
+        $allDept = DeptBase::select('DEPT_NAME', 'DEPT_CODE')
+                ->distinct()
+                ->get();
 
         $vote = vote::find($VOTE_ID);           
         
@@ -220,131 +213,93 @@ class VoteController extends Controller
             'USE_GROUP_FINAL' => $USE_GROUP_FINAL,
             'VOTER_FINAL' => $VOTER_FINAL,
             'VOTE_INFO' => $vote_info,
+            'allDept' => $allDept
         ]);
     }
 
     public function update(Request $request, $VOTE_ID){  
+
+        $VOTE_DATE = $request->input('VOTE_DATE');
+        $CREATE_BY = Auth::user()->USER_ID;
+        $START_DATE = $request->input('START_DATE');
+        $END_DATE = $request->input('END_DATE');
+        $USE_GROUP = $request->input('deptcodesCodeInput');        
+        $TITLE = $request->input('TITLE');
+        $TITLE_DESC = $request->input('TITLE_DESC');
+        $VOTE_INFO = $request->input('VOTE_INFO');
+
+        date_default_timezone_set('Asia/Taipei');
+        $CREATE_DATE = date('Y/m/d H:i:s');
         
-    //     $user_name = $request->input('user_name');
-    //     $user_group = $request->input('user_group');
-    //     $user_zone = $request->input('user_zone');
-    //     $user_boss = $request->input('user_boss');
-    //     $user_role = $request->input('user_role');
-    //     $team = $request->input('team');
-    //     $attribute1 = $request->input('attribute1');
-    //     $user_mail = $request->input('user_mail');
-    //     $orig_vendor = $request->input('orig_vendor');
-    //     $mail = $request->input('mail');
-    //     $salesrep_id = $request->input('salesrep_id');
-    //     $collector_id = $request->input('collector_id');
-    //     $ord_amt = $request->input('ord_amt');
-    //     $ord_dis_amt = $request->input('ord_dis_amt');
-    //     $user_schedule = $request->input('user_schedule');
-    //     $org_id = $request->input('org_id');
-    //     $meal_fee = $request->input('meal_fee');
-    //     $trf_fee = $request->input('trf_fee');
-    //     $user_password1 = $request->input('user_password1');
-    //     $user_password2 = $request->input('user_password2');
-    //     $selected_groups = $request->input('selected_groups');
+        $VOTE_DATE = str_replace('-', '/', $VOTE_DATE);
+        $START_DATE = str_replace('-', '/', $START_DATE);
+        $END_DATE = str_replace('-', '/', $END_DATE);       
 
-    //     $this->saveGroupData($USER_ID, $selected_groups);
+        $updateData = [
+            'VOTE_DATE' => $VOTE_DATE,
+            'TITLE' => $TITLE,
+            'TITLE_DESC' => $TITLE_DESC,
+            'USE_GROUP' => $USE_GROUP,
+            'START_DATE' => $START_DATE,
+            'END_DATE' => $END_DATE,
+            'MODIFY_FLAG' => 'A',
+            'LAST_UPDATE_BY' => $CREATE_BY,
+            'LAST_UPDATE_DATE' => $CREATE_DATE,
+            'ACHIEVE_QTY' => '0',
+            'VOTE_USER' => '0'
+        ];
 
-    //     // dd($selected_groups);
+        Vote::where('VOTE_ID', $VOTE_ID)->update($updateData);
+        
+        $this->saveGroupData($VOTE_ID, $VOTE_INFO);
 
-    //     date_default_timezone_set('Asia/Taipei');
-    //     $last_update_date = date('Y/m/d H:i:s');
+        return redirect()->back()->with('notice', '投票資料已成功編輯！');     
+    }    
 
-    //     if ($user_password1 != $user_password2) {
-    //         return redirect()->back()->with('error', '密碼輸入不一致');
-    //     }
+    public function saveGroupData($VOTE_ID, $VOTE_INFO)
+    {
+        if (Auth::check()) {
+   
+            // 先刪除目前有的投票明細
+            AVOTEL::where('VOTE_ID', $VOTE_ID)->delete();
 
-    //     if ($attribute1 != '') {
-    //         $attribute1 = (explode(' ', $attribute1))[0];
-    //     } 
-
-    //     if ($orig_vendor != '') {
-    //         $orig_vendor = (explode(' ', $orig_vendor))[0];
-    //     } 
-
-    //     if ($user_boss != '') {
-    //         $user_boss = (explode(' ', $user_boss))[0];
-    //     } 
-
-    //     $updateData = [
-    //         'user_name' => $user_name,
-    //         'user_group' => $user_group,
-    //         'user_zone' => $user_zone,
-    //         'user_boss' => $user_boss,
-    //         'user_role' => $user_role,
-    //         'team' => $team,
-    //         'attribute1' => $attribute1,
-    //         'user_mail' => $user_mail,
-    //         'orig_vendor' => $orig_vendor,
-    //         'mail' => $mail,
-    //         'salesrep_id' => $salesrep_id,
-    //         'collector_id' => $collector_id,
-    //         'ord_amt' => $ord_amt,
-    //         'ord_dis_amt' => $ord_dis_amt,
-    //         'user_schedule' => $user_schedule,
-    //         'org_id' => $org_id,
-    //         'meal_fee' => $meal_fee,
-    //         'trf_fee' => $trf_fee,
-    //         'LAST_UPDATE_DATE' => $last_update_date
-    //     ];
-
-    //     if (!empty($user_password1) && !empty($user_password2)) {
-    //         // 如果 $user_password1 和 $user_password2 都不為空，則更新 user_password 欄位
-    //         $updateData['user_password'] = md5($user_password1);
-    //     }
-
-    //     Member::where('user_id', $USER_ID)->update($updateData);
-
-        return redirect()->back()->with('notice', '會員資料已成功編輯！');     
+            $vote_line_count = count($VOTE_INFO);
+        
+            $lastId = AVoteL::max('VOTE_LINE_ID') + 1;
+            $VOTE_ID = Vote::max('VOTE_ID');
+    
+            date_default_timezone_set('Asia/Taipei');
+            $CREATE_DATE = date('Y/m/d H:i:s');
+    
+            $USER_ID = Auth::user()->USER_ID;
+            $LINE_NO = 1;
+    
+            foreach ($VOTE_INFO as $info) {           
+    
+                AVoteL::insert([
+                    'VOTE_LINE_ID' => $lastId,
+                    'VOTE_ID' => $VOTE_ID,
+                    'LINE_NO' => $LINE_NO,            
+                    'VOTE_TITLE' => $info['TITLE'],
+                    'VOTE_TITLE_DESC' => $info['TITLE_DESC'],
+                    'MODIFY_FLAG' => 'A',
+                    'CREATE_BY' => $USER_ID,
+                    'CREATE_DATE' => $CREATE_DATE,
+                    'LAST_UPDATE_BY' => $USER_ID,
+                    'LAST_UPDATE_DATE' => $CREATE_DATE
+                ]);
+    
+                $LINE_NO++;  
+            }
+        } 
+        else {
+            dd($user_id);
+        }
     }
-
-    // function getUserData(){
-    //     // auth()->user()->members->find($USER_ID); 
-    //     $group = DB::table('VALUE_SET_LEBBY')
-    //                 ->select('VLS_CODE')
-    //                 ->where('VLS_KIND', 'GROUP')
-    //                 ->whereIn('ENABLE_FLAG', ['Y', 'D'])
-    //                 ->orderBy('VLS_CODE')
-    //                 ->get();
-                    
-    //     $zone = DB::table('VALUE_SET_LEBBY')
-    //                 ->select('VLS_CODE')
-    //                 ->where('VLS_KIND', 'TERRTORY')
-    //                 ->where('ENABLE_FLAG', 'Y')
-    //                 ->orderBy('VLS_CODE')
-    //                 ->get();
-
-    //     $role = DB::table('PHRASE_TEST')
-    //                 ->select('PHR_TYPE', DB::raw("CONCAT(PHR_TYPE, ' - ', PHR_NAME) AS PHR_NAME"))
-    //                 ->where('PHR_KIND', '02')
-    //                 ->whereIn('MODIFY_FLAG', ['A', 'M'])
-    //                 ->orderBy('PHR_TYPE')
-    //                 ->get();
-
-    //     $org = DB::table('ORGANIZATIONS_TEST')
-    //                 ->select('ORG_ID', 'OU_NAME')
-    //                 ->distinct()
-    //                 ->orderBy('ORG_ID')
-    //                 ->get();
-
-    //     $data = [
-    //         // 'member' => $member, 
-    //         'group' => $group, 
-    //         'zone' => $zone, 
-    //         'role' => $role, 
-    //         'org' => $org
-    //     ];
-
-    //     return $data;
-    // }
     
     public function bulkDestroy(Request $request) {
         $ids = explode(',', $request->input('deleteIds'));
-
+        
         // 刪除所選中的項目 
         $deletedCount = Vote::whereIn('VOTE_ID', $ids)->delete();
 

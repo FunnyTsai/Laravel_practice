@@ -4,6 +4,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MembersController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\VoteController;
+use App\Http\Controllers\VoteStationController;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,10 +52,15 @@ Route::resource('member', MembersController::class)->except([
 
 Route::get('/voteResult', [VoteController::class, 'voteResult_index'])->name('voteResult.index');
 
-
 Route::resource('vote', VoteController::class)->except([
     'destroy'
 ])->middleware('auth')->name('*','vote');
+
+Route::resource('voteStation', VoteStationController::class)->except([
+    'destroy'
+])->middleware('auth')->name('*','voteStation');
+
+Route::get('/voteStation/{voteId}', [VoteStationController::class, 'VoteStation_result'])->name('voteStation.result');
 
 
 /*

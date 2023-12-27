@@ -47,14 +47,14 @@
     </style>
 </head>
 <body>
-    @extends('layouts.page', ['webTitle' => '投票資料'])
+    @extends('layouts.page', ['webTitle' => '投票區'])
 
     @section('sidebar')
         @include('layouts.sidebar')
     @endsection
 
     @section('main')
-        <h1 class="fw-bold">投票資料維護</h1>
+        <h1 class="fw-bold">投票區</h1>
 
         <table
             id="table"
@@ -67,67 +67,47 @@
             >
             <thead>
                 <tr>
-                    <th data-field="checkbox" data-checkbox="true" data-formatter="stateFormatter">刪除</th>  
                     <th data-field="VOTE_ID">ID</th>  
-                    <th data-field="VOTE_DATE" data-filter-control="input">建立日期</th>
-                    {{-- <th data-field="USER_NAME" data-filter-control="input" data-sortable="true">部門</th> --}}
+                    <th data-field="VOTE_DATE" data-filter-control="input" data-sortable="true">建立日期</th>
                     <th data-field="TITLE" data-filter-control="input">標題</th>
                     <th data-field="TITLE_DESC" data-filter-control="input">描述</th>
                     <th data-field="START_DATE" data-sortable="true">開始日期</th>
                     <th data-field="END_DATE" data-sortable="true">結束日期</th>
-                    <th data-field="ACHIEVE_QTY" data-sortable="true">投票數</th>
+                    <th data-field="function">功能</th>    
                 </tr>
             </thead>
             <tbody>
                 @foreach ($voteData as $vote)
-                     <tr>
-                        <td>
-                            <input type="checkbox" name="btSelectItem" value="{{ $vote->VOTE_ID }}">
-                        </td>
+                    <tr>
                         <td>{{ $vote->VOTE_ID }}</td>
-                        <td><a href="{{ route('vote.edit', $vote->VOTE_ID) }}">{{ $vote->VOTE_DATE }}</a></td> 
-                        {{-- <td><a href="{{ route('vote.edit', $vote->VOTE_DATE) }}">{{ $vote->VOTE_DATE }}</a></td>     --}}
+                        <td>{{ $vote->VOTE_DATE }}</td> 
                         <td>{{ $vote->TITLE }}</td>
                         <td>{{ $vote->TITLE_DESC }}</td>
                         <td>{{ $vote->START_DATE }}</td>
-                        <td>{{ $vote->END_DATE }}</td>
-                        <td>{{ $vote->ACHIEVE_QTY }}</td>                       
+                        <td>{{ $vote->END_DATE }}</td>       
+                        <td>
+                            @php
+                                $currentDate = date('Y-m-d');
+                            @endphp
+
+                            @if (($currentDate >= $vote->START_DATE) && ($currentDate <= $vote->END_DATE))    
+                                <a href="{{ route('voteStation.edit', $vote->VOTE_ID) }}" class="btn btn-primary btn-sm">投票</a>
+                            @else
+                                <a href="{{ route('voteStation.result', ['voteId' => $vote->VOTE_ID]) }}" class="btn btn-secondary btn-sm">查看</a>                          
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-
-        <div class="d-flex justify-content-end">
-            <a class="btn btn-primary" href="{{ route('vote.create') }}">新增投票</a>
-            <form id="deleteForm" action="{{ route('vote.bulkDestroy') }}" method="post">
-                @csrf
-                @method('delete')
-                <input type="hidden" name="deleteIds" id="deleteIds">
-                <button type="submit" class="btn btn-danger">刪除選取項目</button>
-            </form>
-        </div>
 
         <script>           
             $(function () {
                 $('#table').bootstrapTable({
                     
                 });
-                
                 $('#table').bootstrapTable('hideColumn', 'VOTE_ID');
             });
-
-            function stateFormatter(value, row, index) {
-                var start_date = row.START_DATE;
-                var end_date = row.END_DATE;  
-                var today = new Date().toISOString().split('T')[0];
- 
-
-                var isDisabled = ((today < start_date) || (today > end_date));
-
-                return {
-                    disabled: isDisabled
-                }
-            }
         </script>
     @endsection
 </body>

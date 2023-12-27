@@ -1,5 +1,9 @@
-.vote-info {
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin-bottom: 20px;
+.modal-lg {
+    max-width: 80%;
+}
+
+/* 調整部門列表高度 */
+.department-list {
+    height: 500px; /* 修改高度 */
+    overflow-y: scroll;
 }
