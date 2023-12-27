@@ -36,7 +36,7 @@
 
     @section('main')
 
-        @include('components.breadcrumb', ['page' => 'member', 'pageName' => '帳號', 'title' => '新增'])
+        @include('components.breadcrumb', ['page' => 'member', 'pageName' => '帳號資料', 'title' => '新增'])
 
         <form class="needs-validation" action="{{route('member.store')}}" method="post" required>
             @csrf

@@ -47,7 +47,7 @@
     @section('main')
        
 
-        @include('components.breadcrumb', ['page' => 'member', 'pageName' => '帳號', 'title' => '編輯'])
+        @include('components.breadcrumb', ['page' => 'member', 'pageName' => '帳號資料', 'title' => '編輯'])
 
         <form class="needs-validation" action="{{route('member.update', $member)}}" novalidate method="post" required>
             @csrf
