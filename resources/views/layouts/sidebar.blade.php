@@ -191,8 +191,8 @@
           <div class="collapse" id="voting-collapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
               <li><a href="{{ route('vote.index') }}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票資料維護</a></li>
-              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票區</a></li>
-              <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票結果查詢</a></li>
+              <li><a href="{{ route('voteStation.index') }}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票區</a></li>
+              <li><a href="{{ route('voteResult.index') }}" class="link-body-emphasis d-inline-flex text-decoration-none rounded">投票結果查詢</a></li>
             </ul>
           </div>
         </li>
