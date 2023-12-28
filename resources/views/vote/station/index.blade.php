@@ -12,6 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ asset('css/table.css') }}">
 
     <!-- 引入 jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -35,16 +36,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-table/bootstrap-table-filter-control.css') }}">
     <script src="{{ asset('js/vote/delete.js') }}" crossorigin="anonymous"></script>
-
-    <style>
-        #table th {
-            text-align: center;
-        }
-    
-        #table td {
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
     @extends('layouts.page', ['webTitle' => '投票區'])

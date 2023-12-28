@@ -12,6 +12,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="{{ asset('css/table.css') }}">
 
     <!-- 引入 jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -120,7 +121,6 @@
                 var start_date = row.START_DATE;
                 var end_date = row.END_DATE;  
                 var today = new Date().toISOString().split('T')[0];
- 
 
                 var isDisabled = ((today < start_date) || (today > end_date));
 
