@@ -4,6 +4,10 @@
 
 /* 調整部門列表高度 */
 .department-list {
-    height: 500px; /* 修改高度 */
+    height: 500px;
     overflow-y: scroll;
+}
+
+input[readonly], textarea[readonly] {
+    background-color: #f0f0f0;
 }
