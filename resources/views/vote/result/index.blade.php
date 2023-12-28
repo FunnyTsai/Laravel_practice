@@ -14,6 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="{{ asset('css/table.css') }}">
 
     <!-- 引入 jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -41,22 +42,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.2/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('bootstrap-table/bootstrap-table-filter-control.css') }}">
     
-    <!-- 引入 autocomplete相關 -->
-    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.0/themes/smoothness/jquery-ui.css">
-    <script src="https://code.jquery.com/ui/1.13.0/jquery-ui.min.js"></script>
-
-    <script src="{{ asset('js/vote/result/autocomplete.js') }}"></script>
-    <script src="{{ asset('js/vote/result/index.js') }}"></script>
-
-    <style>
-        #table th {
-            text-align: center;
-        }
-    
-        #table td {
-            text-align: center;
-        }
-    </style>
+    <!-- 引入 table printer相關 -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.21.4/extensions/print/bootstrap-table-print.min.js"></script>
 </head>
 <body>
     @extends('layouts.page', ['webTitle' => '投票結果查詢'])
@@ -66,8 +53,7 @@
     @endsection
 
     @section('main')
-        <h1 class="fw-bold">投票結果查詢</h1>
-        
+        <h1 class="fw-bold">投票結果查詢</h1>        
 
         <form class="needs-validation" action="{{ route('voteResult.index') }}" method="get" id="filterForm">
             @csrf
@@ -86,7 +72,7 @@
                             @endforeach
                         </select>
                         <div>
-                            <button class="btn btn-primary" type="submit">確定</button>
+                            <button class="btn btn-primary" type="submit">搜尋</button>
                             <button class="btn btn-secondary" onclick="window.location='{{ route('voteResult.index') }}'">回復</button>                            
                         </div>
                     </div>
@@ -104,6 +90,7 @@
             data-locale="zh-TW"
             data-toolbar="#toolbar"
             data-show-export="true"
+            data-show-print="true"
             >
             <thead>
                 <tr>
@@ -127,15 +114,12 @@
 
         <script>
             window.voteResultUrl = "{{ route('voteResult.index') }}";
-
             
             $('#filterForm').on('submit', function(e) {
-                e.preventDefault(); // 阻止表單默認提交行為
-                var voteTitle = $('select[name="voteTitle"]').val(); // 獲取選擇的投票主題值
+                e.preventDefault(); 
 
-                console.log(voteTitle);
+                var voteTitle = $('select[name="voteTitle"]').val(); 
 
-                // 發送 AJAX 請求到您的控制器中，將所選的值傳遞過去
                 $.ajax({
                     url: {{ route('voteResult.index') }},
 
@@ -144,7 +128,7 @@
                         voteTitle: voteTitle
                     },
                     success: function(response) {
-                        console.log("response",response); // 可以根據需要執行其他操作
+                        console.log("response",response); 
                     },
                     error: function(error) {
                         console.log(error);
@@ -159,36 +143,14 @@
 
         <script>           
             $(function () {
-                // 取得所有行的資料
-                var currentVoteTitle = $('tr[data-index="0"] td:first').text();
-                console.log(currentVoteTitle); // 這將顯示所有行的資料陣列
-
                 $('#table').bootstrapTable({
-                    //是否顯示導出按鈕
                     showExport: true,
-                    // 按鈕位置
-                    buttonsAlign:"right",  
+                    buttonsAlign: "right",
                     exportDataType: "all",
-                    // 匯出檔案類型
-                    exportTypes: ['json', 'xml', 'csv', 'txt', 'sql'],
-                    exportOptions:{
-                    // 匯出時不包含的欄位
-                    ignoreColumn: function (index, column) {
-                        // 如果 ignoreColumn 被設定為 true，將會忽略被隱藏的欄位
-                        if (!$(column).data('visible')) {
-                        return true;
-                        }
-                        // 如果 data-show-columns 被設定為 true，則只匯出被選擇的欄位
-                        if ($('#table').bootstrapTable('getOptions').showColumns &&
-                            $('#table').bootstrapTable('getOptions').showColumns.length > 0 &&
-                            $.inArray($(column).data('field'), $('#table').bootstrapTable('getOptions').showColumns) === -1) {
-                        return true;
-                        }
-                        return false;
-                    },
-                    // 檔案名稱
-                    // fileName: '投票結果_' + currentVoteTitle,  
-                    }                    
+                    exportTypes: ['json', 'csv', 'txt'],
+                    exportOptions: {
+                        fileName: '投票結果',
+                    }
                 });
             });
         </script>

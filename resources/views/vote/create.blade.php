@@ -41,7 +41,7 @@
 
         @include('components.breadcrumb', ['page' => 'vote', 'pageName' => '投票資料維護', 'title' => '新增'])
      
-        <form class="needs-validation" action="{{route('vote.store')}}" method="post" required>
+        <form id="voteForm" class="needs-validation" action="{{route('vote.store')}}" method="post" required>
             @csrf
             <div class="col-md-12 col-lg-12">
                 <hr class="my-4">
@@ -60,17 +60,11 @@
                 <div class="row g-4 mb-4">
                     <div class="col-sm-6">
                         <label for="START_DATE" class="form-label">投票期間(起)</label>
-                        <input type="date" class="form-control" value="{{old('START_DATE')}}" name="START_DATE" required>
-                        <div class="invalid-feedback">
-                            建立日期欄位為必填.
-                        </div>
+                        <input type="date" class="form-control" value="{{old('START_DATE')}}" id="START_DATE" name="START_DATE" required>
                     </div>
                     <div class="col-sm-6">
                         <label for="END_DATE" class="form-label">投票期間(迄)</label>
-                        <input type="date" class="form-control" value="{{old('END_DATE')}}" name="END_DATE" required>
-                        <div class="invalid-feedback">
-                            建立日期欄位為必填.
-                        </div>
+                        <input type="date" class="form-control" value="{{old('END_DATE')}}" id="END_DATE" name="END_DATE" required>
                     </div>
                 </div>
                     
@@ -80,7 +74,7 @@
                         <div class="d-flex align-items-center">
                             <div class="col-md-11">
                                 <input type="hidden" id="deptcodesCodeInput" name="deptcodesCodeInput">
-                                <textarea id="departmentInput" name="departmentInput" type="text" class="form-control" rows="6" cols="50" readonly></textarea>
+                                <textarea id="departmentInput" name="departmentInput" type="text" class="form-control" rows="6" cols="50" readonly required></textarea>
                             </div>
                             <div class="col-md-1">
                                 <a data-bs-toggle="modal" data-bs-target="#departmentModal" class="btn btn-success ms-3 departmentBtn">選擇</a>
@@ -120,7 +114,7 @@
                 <div class="text-end">
                     <button class="btn btn-success" type="submit">確定存檔</button>
                     <a class="btn btn-light" href="{{ route('vote.index') }}">回主畫面</a>
-                </div>   
+                </div>
             </div>                   
         </form> 
                 

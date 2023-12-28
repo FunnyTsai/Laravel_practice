@@ -154,8 +154,9 @@ class VoteController extends Controller
     public function edit($VOTE_ID){  
 
         $allDept = DeptBase::select('DEPT_NAME', 'DEPT_CODE')
-                ->distinct()
-                ->get();
+                            ->where('STATUS_FLAG', '<>', 'D')
+                            ->distinct()
+                            ->get();
 
         $vote = vote::find($VOTE_ID);           
         
@@ -183,8 +184,8 @@ class VoteController extends Controller
 
         $USE_GROUP_FINAL = implode(', ', $USE_GROUP);
         
-        // 已投票人員        
-        $VOTER_array = explode(',',($vote->VOTE_USER));
+        // 已投票人員                
+        $VOTER_array = explode(',',(AVoteResult::where('VOTE_ID', $VOTE_ID)->pluck('CREATE_BY')->implode(',')));
 
         $VOTER = [];
 
@@ -211,6 +212,7 @@ class VoteController extends Controller
             'vote' => $vote,
             'CREATE_BY' => $CREATE_BY,
             'USE_GROUP_FINAL' => $USE_GROUP_FINAL,
+            'USE_GROUP_CODE' => $vote->USE_GROUP,            
             'VOTER_FINAL' => $VOTER_FINAL,
             'VOTE_INFO' => $vote_info,
             'allDept' => $allDept
@@ -251,12 +253,12 @@ class VoteController extends Controller
 
         Vote::where('VOTE_ID', $VOTE_ID)->update($updateData);
         
-        $this->saveGroupData($VOTE_ID, $VOTE_INFO);
+        $this->saveVoteData($VOTE_ID, $VOTE_INFO);
 
         return redirect()->back()->with('notice', '投票資料已成功編輯！');     
     }    
 
-    public function saveGroupData($VOTE_ID, $VOTE_INFO)
+    public function saveVoteData($VOTE_ID, $VOTE_INFO)
     {
         if (Auth::check()) {
    
@@ -266,7 +268,6 @@ class VoteController extends Controller
             $vote_line_count = count($VOTE_INFO);
         
             $lastId = AVoteL::max('VOTE_LINE_ID') + 1;
-            $VOTE_ID = Vote::max('VOTE_ID');
     
             date_default_timezone_set('Asia/Taipei');
             $CREATE_DATE = date('Y/m/d H:i:s');
@@ -288,6 +289,10 @@ class VoteController extends Controller
                     'LAST_UPDATE_BY' => $USER_ID,
                     'LAST_UPDATE_DATE' => $CREATE_DATE
                 ]);
+
+                
+
+                // dd($info);
     
                 $LINE_NO++;  
             }

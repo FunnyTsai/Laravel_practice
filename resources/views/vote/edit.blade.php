@@ -1,6 +1,8 @@
 
 {{-- 檢查傳送過來的資料 --}}
 @isset($vote)
+
+    {{-- {{dd($USE_GROUP_FINAL)}} --}}
     {{-- {{ dd($data['group']) }} --}}
     {{-- {{ dd($vote['collector_name']) }}
     {{ dd($vote['attribute1_name']) }} --}}
@@ -35,7 +37,6 @@
     
     <script src="{{ asset('js/vote/vote.js') }}"></script>
     <script src="{{ asset('js/vote/edit.js') }}"></script>
-    <script src="{{ asset('js/autocomplete.js') }}"></script>
 </head>
 <body>
     @extends('layouts.page', ['webTitle' => '投票資料'])
@@ -49,7 +50,7 @@
 
         @include('components.breadcrumb', ['page' => 'vote', 'pageName' => '投票資料維護', 'title' => '編輯'])
 
-        <form class="needs-validation" action="{{route('vote.update', $vote)}}" novalidate method="post" required>
+        <form id="voteForm" class="needs-validation" action="{{route('vote.update', $vote)}}" novalidate method="post" required>
             @csrf
             @method('patch')
             <div class="col-md-12 col-lg-12">
@@ -74,33 +75,20 @@
                     <div class="col-sm-6">
                         <label for="START_DATE" class="form-label">投票期間(起)</label>
                         <input type="date" id="START_DATE" class="form-control" value="{{ date('Y-m-d', strtotime($vote['START_DATE'])) }}" name="START_DATE" required>
-                        <div class="invalid-feedback">
-                            建立日期欄位為必填.
-                        </div>
                     </div>
                     <div class="col-sm-6">
                         <label for="END_DATE" class="form-label">投票期間(迄)</label>
                         <input type="date" id="END_DATE" class="form-control" value="{{ date('Y-m-d', strtotime($vote['END_DATE'])) }}" name="END_DATE" required>
-                        <div class="invalid-feedback">
-                            建立日期欄位為必填.
-                        </div>
                     </div>
                 </div>
-                    
-                {{-- <div class="row g-4 mb-4">
-                    <div class="col-sm-12">
-                        <label for="USE_GROUP" class="form-label">部門</label>
-                        <textarea class="form-control" name="USE_GROUP" rows="4" cols="50" required>{{ $USE_GROUP_FINAL }}</textarea>
-                    </div>
-                </div> --}}
                     
                 <div class="row g-4 mb-4">
                     <div class="col-sm-12">
                         <label for="selectedDepartments" class="form-label mb-2">部門</label>
                         <div class="d-flex align-items-center">
                             <div class="col-md-11">
-                                <input type="hidden" id="deptcodesCodeInput" name="deptcodesCodeInput">                                
-                                <textarea id="departmentInput" name="departmentInput" class="form-control" name="USE_GROUP" rows="6" cols="50" required>{{ $USE_GROUP_FINAL }}</textarea>
+                                <input type="hidden" id="deptcodesCodeInput" name="deptcodesCodeInput" value="{{ $USE_GROUP_CODE }}">                                
+                                <textarea id="departmentInput" name="departmentInput" class="form-control" name="USE_GROUP" rows="6" cols="50" readonly required>{{ $USE_GROUP_FINAL }}</textarea>
                             </div>
                             <div class="col-md-1">
                                 <a data-bs-toggle="modal" data-bs-target="#departmentModal" class="btn btn-success ms-3 departmentBtn">選擇</a>
@@ -112,21 +100,21 @@
                 <div class="row g-4 mb-4">
                     <div class="col-sm-12">
                         <label for="TITLE" class="form-label">標題</label>
-                        <textarea class="form-control" name="TITLE" rows="1" cols="50" required>{{ $vote['TITLE'] }}</textarea>
+                        <textarea class="form-control" id="TITLE" name="TITLE" rows="1" cols="50" required>{{ $vote['TITLE'] }}</textarea>
                     </div>
                 </div>
 
                 <div class="row g-4 mb-4">
                     <div class="col-sm-12">
                         <label for="TITLE_DESC" class="form-label">描述</label>
-                        <textarea class="form-control" name="TITLE_DESC" rows="6" cols="50" required>{{ $vote['TITLE_DESC'] }}</textarea>
+                        <textarea class="form-control" id="TITLE_DESC" name="TITLE_DESC" rows="6" cols="50" required>{{ $vote['TITLE_DESC'] }}</textarea>
                     </div>
                 </div>
 
                 <div class="row g-4 mb-4">
                     <div class="col-sm-12">
                         <label for="VOTE_USER" class="form-label">已投票人員</label>
-                        <textarea class="form-control" name="VOTE_USER" rows="6" cols="50" required readonly>{{ $VOTER_FINAL }}</textarea>
+                        <textarea class="form-control" name="VOTE_USER" id="VOTE_USER" rows="6" cols="50" required readonly>{{ $VOTER_FINAL }}</textarea>
                     </div>
                 </div>
     
@@ -150,7 +138,7 @@
                 </div>   
 
                 <div class='hidden'>                                
-                    <input type="hidden" id="vote_info" data-info="{{ $VOTE_INFO }}">
+                    <input type="hidden" name="vote_info" id="vote_info" data-info="{{ $VOTE_INFO }}">
                 </div> 
             </div>                   
         </form>   
@@ -186,6 +174,12 @@
                             </div>
                         </div>
                     </div>
+
+                    
+                    <div class='hidden'>                                
+                        <input type="hidden" id="USE_GROUP_CODE" data-info="{{ $USE_GROUP_CODE }}">
+                    </div> 
+
                     <div class="modal-footer">
                         <button type="button" class="btn btn-success" id="selectDepartments" data-bs-dismiss="modal">確認</button>
                     </div>                    
